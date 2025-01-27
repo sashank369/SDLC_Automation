@@ -18,8 +18,9 @@ class PoemState(BaseModel):
     java_version: int = 11
     language: str = ""
     build_type:str='maven'
-    boot_version:str='3.2.2'
+    boot_version:str='3.3.0'
     base_url:str = "https://start.spring.io/starter.zip"
+    api_result: dict = {}
     
     
 
@@ -79,7 +80,9 @@ class PoemFlow(Flow[PoemState]):
             .kickoff()
         )
 
-        print("api result: ", result)
+        print("api result: ", result.raw)
+        self.state.api_result = result.raw  # Save the result in state
+        print("API parsed successfully and stored in state.")
 
 
 def kickoff():
