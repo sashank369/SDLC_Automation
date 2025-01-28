@@ -1,0 +1,12 @@
+generate_model_layer:
+  description: >
+    Parse the {api_result} to generate the model layer for the Spring Boot application
+    by creating Java entity classes based on the "Data Models" section. Ensure the
+    generated files follow the existing folder structure in the Spring Boot boilerplate.
+
+  expected_output: >
+    Java entity class files for all data models extracted from the {api_result},
+    adhering to the existing boilerplate folder structure in the {project_name} folder.
+    - The generated files should be placed in the exisiting boilerplate folder structure within the {project_name} folder.
+    - The generated files should be written in the proper spiring boot file structure.
+

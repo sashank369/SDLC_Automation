@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from crewai.flow.flow import Flow, listen, start
 
 from code_generator.crews.api_parser.api_parser import ApiParser
+from code_generator.crews.Model_Layer.Model_Layer import ModelLayer
 import requests
 import zipfile
 import os
@@ -21,6 +22,7 @@ class PoemState(BaseModel):
     boot_version:str='3.3.0'
     base_url:str = "https://start.spring.io/starter.zip"
     api_result: dict = {}
+    entity_result: dict = {}
     
     
 
@@ -84,6 +86,21 @@ class PoemFlow(Flow[PoemState]):
         self.state.api_result = result.raw  # Save the result in state
         print("API parsed successfully and stored in state.")
 
+    @listen(api_parser)
+    def generate_model(self):
+        print("Generating model")
+        print("API Result: ", self.state.api_result)
+        result = (
+            ModelLayer()
+            .crew()
+            .kickoff(inputs={
+                'api_result': self.state.api_result,
+                'project_name': self.state.project_name,
+            })
+        )
+        print("Model result: ", result.raw)
+        self.state.entity_result = result.raw  # Save the result in state
+        print("Entity Model successfully and stored in state.")
 
 def kickoff():
     poem_flow = PoemFlow()
