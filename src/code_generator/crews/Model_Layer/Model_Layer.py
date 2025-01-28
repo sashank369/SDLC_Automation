@@ -2,11 +2,12 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import FileReadTool,FileWriterTool
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 import os
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
-
+load_dotenv()
 
 @CrewBase
 class ModelLayer:
@@ -17,6 +18,7 @@ class ModelLayer:
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
+    llm = ChatOpenAI(model=os.getenv('MODEL'))
 
     # If you would lik to add tools to your crew, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
@@ -24,11 +26,11 @@ class ModelLayer:
     def model_developer(self) -> Agent:
         if 'model_developer' not in self.agents_config:
             raise KeyError("Missing configuration for 'model_developer' in agents_config.")
-        load_dotenv()
         return Agent(
             config=self.agents_config['model_developer'],
             allow_delegation=True,
             verbose=True,
+            llm=self.llm,
             tools=[FileWriterTool()],
             memory=False
         )

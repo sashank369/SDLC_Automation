@@ -76,15 +76,17 @@ class PoemFlow(Flow[PoemState]):
             return f"Spring Boot project {self.state.project_name} created successfully!"
         else:
             return "Failed"
+        
+
     @listen(generate_spring_boot_project)
     def configure_application_properties(self):
         properties_content = """spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.h2.console.enabled=true
-"""
+                                spring.datasource.driverClassName=org.h2.Driver
+                                spring.datasource.username=sa
+                                spring.datasource.password=password
+                                spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+                                spring.h2.console.enabled=true
+                                """
 
         properties_file_path = os.path.join(self.state.project_name, "src", "main", "resources", "application.properties")
 
@@ -95,7 +97,9 @@ spring.h2.console.enabled=true
             file.write(properties_content)
 
         print(f"application.properties configured successfully at {properties_file_path}")
-    @listen(Intialization)
+
+
+    @listen(configure_application_properties)
     def api_parser(self):
         print("parsing the api")
         result = (
@@ -118,6 +122,7 @@ spring.h2.console.enabled=true
             .kickoff(inputs={
                 'api_result': self.state.api_result,
                 'project_name': self.state.project_name,
+                'package_name': self.state.package_name,
             })
         )
         print("Model result: ", result.raw)
