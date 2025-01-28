@@ -10,6 +10,10 @@ from code_generator.crews.Model_Layer.Model_Layer import ModelLayer
 import requests
 import zipfile
 import os
+import openai
+
+# Load API key from environment variable
+openai.api_key = os.getenv("OPEN_API_KEY")
 
 
 class PoemState(BaseModel):
@@ -72,7 +76,25 @@ class PoemFlow(Flow[PoemState]):
             return f"Spring Boot project {self.state.project_name} created successfully!"
         else:
             return "Failed"
+    @listen(generate_spring_boot_project)
+    def configure_application_properties(self):
+        properties_content = """spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+"""
 
+        properties_file_path = os.path.join(self.state.project_name, "src", "main", "resources", "application.properties")
+
+        if not os.path.exists(os.path.dirname(properties_file_path)):
+            os.makedirs(os.path.dirname(properties_file_path))
+
+        with open(properties_file_path, 'w') as file:
+            file.write(properties_content)
+
+        print(f"application.properties configured successfully at {properties_file_path}")
     @listen(Intialization)
     def api_parser(self):
         print("parsing the api")
@@ -85,7 +107,7 @@ class PoemFlow(Flow[PoemState]):
         print("api result: ", result.raw)
         self.state.api_result = result.raw  # Save the result in state
         print("API parsed successfully and stored in state.")
-
+    
     @listen(api_parser)
     def generate_model(self):
         print("Generating model")

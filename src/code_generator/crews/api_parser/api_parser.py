@@ -2,11 +2,12 @@ from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import FileReadTool
 from dotenv import load_dotenv
+from langchain_openai import ChatOpenAI
 import os
 # If you want to run a snippet of code before or after the crew starts,
 # you can use the @before_kickoff and @after_kickoff decorators
 # https://docs.crewai.com/concepts/crews#example-crew-class-with-decorators
-
+load_dotenv()
 
 @CrewBase
 class ApiParser:
@@ -17,6 +18,7 @@ class ApiParser:
     # Tasks: https://docs.crewai.com/concepts/tasks#yaml-configuration-recommended
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
+    llm = ChatOpenAI(model=os.getenv('MODEL'))
 
     # If you would lik to add tools to your crew, you can learn more about it here:
     # https://docs.crewai.com/concepts/agents#agent-tools
@@ -24,11 +26,11 @@ class ApiParser:
     def tech_lead(self) -> Agent:
         if 'tech_lead' not in self.agents_config:
             raise KeyError("Missing configuration for 'tech_lead' in agents_config.")
-        load_dotenv()
         return Agent(
             config=self.agents_config['tech_lead'],
             allow_delegation=True,
             verbose=True,
+            llm=self.llm,
             tools=[FileReadTool(file_path=os.getenv('API_CONTRACT_PATH'))],
             memory=False
         )
