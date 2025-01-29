@@ -27,6 +27,7 @@ class PoemState(BaseModel):
     base_url:str = "https://start.spring.io/starter.zip"
     api_result: dict = {}
     entity_result: dict = {}
+    model_path: str = ""
     
     
 
@@ -81,12 +82,12 @@ class PoemFlow(Flow[PoemState]):
     @listen(generate_spring_boot_project)
     def configure_application_properties(self):
         properties_content = """spring.datasource.url=jdbc:h2:mem:testdb
-                                spring.datasource.driverClassName=org.h2.Driver
-                                spring.datasource.username=sa
-                                spring.datasource.password=password
-                                spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-                                spring.h2.console.enabled=true
-                                """
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+"""
 
         properties_file_path = os.path.join(self.state.project_name, "src", "main", "resources", "application.properties")
 
@@ -116,6 +117,14 @@ class PoemFlow(Flow[PoemState]):
     def generate_model(self):
         print("Generating model")
         print("API Result: ", self.state.api_result)
+        # Example base path
+        base_path = os.path.join(self.state.project_name, "src", "main", "java")
+        # Convert package name to directory path
+        package_path = self.state.package_name.replace('.', os.sep)
+        # Full path to the models directory
+        models_path = os.path.join(base_path, package_path, "Models")
+        self.state.model_path = models_path
+        print(f"Models directory path: {models_path}")
         result = (
             ModelLayer()
             .crew()
@@ -123,6 +132,7 @@ class PoemFlow(Flow[PoemState]):
                 'api_result': self.state.api_result,
                 'project_name': self.state.project_name,
                 'package_name': self.state.package_name,
+                'models_path': models_path
             })
         )
         print("Model result: ", result.raw)

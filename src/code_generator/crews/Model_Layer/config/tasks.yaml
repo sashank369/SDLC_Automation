@@ -1,10 +1,7 @@
 generate_model_layer:
   description: >
-    Parse the {api_result} to generate the model layer for the Spring Boot application
-    by creating Java entity classes based on the "Data Models" section. Ensure the
-    generated files follow the existing folder structure in the Spring Boot boilerplate.
-
-    Based on the Implementation Requirements for the Spring Boot Application, create a fully functional Spring Boot application with the following steps:
+    Parse the {api_result} to generate the model layer for the Spring Boot application.
+    Based on the Implementation Requirements for the Spring Boot Application, create a fully functional model layer with the following steps:
     - Create Java entity classes for all data models extracted from the {api_result}.
     - Generate JPA entity classes using the `jakarta.persistence` package (not `javax.persistence`) and add Lombok annotations (`@Getter`, `@Setter`, and optionally `@NoArgsConstructor` and `@AllArgsConstructor`) to entity classes to auto-generate getters and setters.
     - Create Spring Data JPA repository interfaces.
@@ -15,6 +12,7 @@ generate_model_layer:
   expected_output: >
     Java entity class files for all data models extracted from the {api_result},
     adhering to the existing boilerplate folder structure in the {project_name} folder.
-    - The generated files should be placed in the exisiting boilerplate folder structure within the {project_name} folder.
+    - The generated files should be placed in the exisiting boilerplate folder structure within the folder which is in this path {models_path}.
+    - If there is no folder is there in the path {models_path} then create a folder with the name Models and place the generated files in it.
     - The generated files should be written in the proper spiring boot file structure.
 
