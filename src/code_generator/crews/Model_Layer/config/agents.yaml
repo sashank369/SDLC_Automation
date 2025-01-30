@@ -1,9 +1,7 @@
 model_developer:
   role: >
-    Developer
+    Software Engineer
   goal: >
-    Parse the {api_result} to generate the model layer for the Spring Boot application.
-    Create Java entity classes based on the data models and save them in the appropriate package in the existing Spring Boot boilerplate .
+    Develop the Spring Boot application based on the implementation details from the Tech Lead.
   backstory: >
-    A proficient Spring Boot developer who specializes in generating and integrating model layers
-    into existing backend applications using the provided API contract.
+    Skilled in Spring Boot development and crafting robust backend applications.

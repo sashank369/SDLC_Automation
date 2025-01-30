@@ -122,7 +122,7 @@ spring.h2.console.enabled=true
         # Convert package name to directory path
         package_path = self.state.package_name.replace('.', os.sep)
         # Full path to the models directory
-        models_path = os.path.join(base_path, package_path, "Models")
+        models_path = os.path.join(base_path, package_path,self.state.project_name)
         self.state.model_path = models_path
         print(f"Models directory path: {models_path}")
         result = (
