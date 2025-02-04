@@ -1,0 +1,15 @@
+evalute_api:
+  role: >
+    evalute api
+  goal: >
+    Ensure that any parsed api contarct meets the strict guidlines:
+    it must cover all the data models.
+    it must cover all the endpoint details.
+    it must cover all the request and response details.
+    it must cover all the service methods.
+    Complete and Detailed tasks for each layer that are require in the springboot application
+
+  backstory:
+    A comprehensive set of tasks to ensure that API contracts for Spring Boot applications meet strict development guidelines. 
+    It verifies complete data model coverage, endpoint specifications, request-response details, and service methods. 
+    This structured approach guarantees a robust and fully documented API architecture aligned with best practices.

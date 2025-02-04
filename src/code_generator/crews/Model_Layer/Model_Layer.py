@@ -1,3 +1,4 @@
+import subprocess
 from crewai import Agent, Crew, Process, Task
 from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import FileReadTool,FileWriterTool
@@ -32,7 +33,7 @@ class ModelLayer:
             verbose=True,
             llm="gpt-4o",
             tools=[FileWriterTool()],
-            memory=False
+            memory=False,
         )
 
     # To learn more about structured task outputs,
@@ -47,6 +48,40 @@ class ModelLayer:
             agent=self.model_developer()
         )
 
+    @task
+    def verify_application(self) -> Task:
+        def verification_logic():
+            try:
+                # Compile the Spring Boot project
+                build_process = subprocess.run(
+                    ["./mvnw", "clean", "package"], 
+                    cwd="/demo",  # Update this path accordingly
+                    capture_output=True, text=True, check=True
+                )
+                print("Build Output:", build_process.stdout)
+
+                # Run the generated Spring Boot application
+                run_process = subprocess.run(
+                    ["java", "-jar", "target/app.jar"], 
+                    cwd=".", 
+                    capture_output=True, text=True, check=True
+                )
+                print("Run Output:", run_process.stdout)
+                return "Application ran successfully."
+
+            except subprocess.CalledProcessError as e:
+                error_message = f"Error: {e.stderr}"
+                print(error_message)
+                return error_message
+
+        return Task(
+            agent=self.model_developer(),
+            description="Verifies if the generated Spring Boot application is runnable.",
+            expected_output="Application runs successfully without errors.",
+            task_fn=verification_logic
+        )
+
+
     @crew
     def crew(self) -> Crew:
         """Creates the Research Crew"""
@@ -55,7 +90,7 @@ class ModelLayer:
 
         return Crew(
             agents=self.agents,  # Automatically created by the @agent decorator
-            tasks=self.tasks,  # Automatically created by the @task decorator
+            tasks=self.tasks+[self.verify_application()],  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
         )

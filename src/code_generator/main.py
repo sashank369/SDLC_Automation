@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 from random import randint
+from typing import Optional
 
 from pydantic import BaseModel
 
-from crewai.flow.flow import Flow, listen, start
+from crewai.flow.flow import Flow, listen, start,router,or_
 
 from code_generator.crews.api_parser.api_parser import ApiParser
 from code_generator.crews.Model_Layer.Model_Layer import ModelLayer
+from code_generator.crews.evaluate_api_parser.evaluate_api_parser import EvaluateApiParser
 import requests
 import zipfile
 import os
@@ -28,6 +30,9 @@ class PoemState(BaseModel):
     api_result: dict = {}
     entity_result: dict = {}
     model_path: str = ""
+    feedback:Optional[str]=None
+    valid:bool=False
+    retry_count:int=0
     
     
 
@@ -100,20 +105,44 @@ spring.h2.console.enabled=true
         print(f"application.properties configured successfully at {properties_file_path}")
 
 
-    @listen(configure_application_properties)
+
+    @listen(or_(configure_application_properties,"retry"))
     def api_parser(self):
         print("parsing the api")
         result = (
             ApiParser()
             .crew()
-            .kickoff()
+            .kickoff(inputs={"feedback":self.state.feedback})
         )
 
         print("api result: ", result.raw)
         self.state.api_result = result.raw  # Save the result in state
         print("API parsed successfully and stored in state.")
     
-    @listen(api_parser)
+    @router(api_parser)
+    def evaluate_api_parser(self):
+        if self.state.retry_count >3:
+            return "max_retry"
+        # Evaluate the result of the API parser
+        result=EvaluateApiParser().crew().kickoff(inputs={"api_result":self.state.api_result})
+        self.state.valid=result["valid"]
+        self.state.feedback=result["feedback"]
+        
+        print("valid",self.state.valid)
+        print("feedback",self.state.feedback)
+        self.state.retry_count+=1
+        
+        if self.state.valid:
+            return "completed"
+        return "retry"
+    
+    @listen("max_retry")
+    def max_retry_limit(self):
+        print("reached the try limit proceding you te same one")
+        return "completed"
+    
+    
+    @listen("completed")
     def generate_model(self):
         print("Generating model")
         print("API Result: ", self.state.api_result)
