@@ -8,6 +8,12 @@ evalute_api_task:
     - Complete service method mapping with correct exception handling and separation of concerns.
     - Comprehensive API documentation with Swagger/OpenAPI, clear descriptions, and versioning.
     - Security evaluation ensuring authentication, secure communication protocols, input validation, and secure headers.
+
+    Your final response must include:
+    Valid: True/False
+    Feedback: Provide commentary if the post fails any of the criteria.
+    API contract to Verify:
+    {api_result}
   expected_output: >
     Pass: True/False
     Feedback: Provide commentary if the contract fails any of the criteria.

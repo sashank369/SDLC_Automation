@@ -10,7 +10,7 @@ parse_api_contract:
     - Service methods with defined business logic and exception handling.
     - Comprehensive security considerations, including authentication and input validation.
     Please incorporate the following feedback if present:
-    (feedback)
+    {feedback}
   expected_output: >
     Complete and Detailed tasks for each layer, including all endpoint details, all data models, all database schema, and all service methods. This output will be organized by API tags for clarity and completeness.
   agent: tech_lead

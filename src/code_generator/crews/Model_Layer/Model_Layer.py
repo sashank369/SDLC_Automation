@@ -52,25 +52,37 @@ class ModelLayer:
     def verify_application(self) -> Task:
         def verification_logic():
             try:
+                project_dir = os.path.abspath("/demo1")
+                if not os.path.exists(project_dir):
+                    return f"Directory {project_dir} does not exist. Check the project path."
+
                 # Compile the Spring Boot project
                 build_process = subprocess.run(
-                    ["./mvnw", "clean", "package"], 
-                    cwd="/demo",  # Update this path accordingly
+                    ["./mvnw", "clean", "package"],
+                    cwd=project_dir,
                     capture_output=True, text=True, check=True
                 )
                 print("Build Output:", build_process.stdout)
+                print("Build Errors:", build_process.stderr)
+                if build_process.returncode != 0:
+                    return f"Build failed: {build_process.stderr}"
+
+                # Check if the jar file exists
+                jar_file_path = os.path.join(project_dir, "target", "app.jar")
+                if not os.path.exists(jar_file_path):
+                    return f"JAR file not found at {jar_file_path}. Check the build process."
 
                 # Run the generated Spring Boot application
                 run_process = subprocess.run(
-                    ["java", "-jar", "target/app.jar"], 
-                    cwd=".", 
+                    ["java", "-jar", jar_file_path],
+                    cwd=project_dir,
                     capture_output=True, text=True, check=True
                 )
                 print("Run Output:", run_process.stdout)
                 return "Application ran successfully."
 
             except subprocess.CalledProcessError as e:
-                error_message = f"Error: {e.stderr}"
+                error_message = f"Error during execution: {e.stderr or e.stdout}"
                 print(error_message)
                 return error_message
 
@@ -90,7 +102,7 @@ class ModelLayer:
 
         return Crew(
             agents=self.agents,  # Automatically created by the @agent decorator
-            tasks=self.tasks+[self.verify_application()],  # Automatically created by the @task decorator
+            tasks=self.tasks + [self.verify_application()],  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
         )
