@@ -2,9 +2,15 @@ import os
 import subprocess
 
 def build_and_run_springboot(project_path):
+    
     try:
         # Navigate to the Spring Boot project directory
-        os.chdir(project_path)
+        if os.path.exists(project_directory):
+            print("Directory exists:", os.listdir(project_directory))
+            os.chdir(project_path)
+        else:
+            print("Directory does not exist:", project_directory)
+            return
         
         # Build the project
         build_command = ["mvn", "clean", "package"]
@@ -24,5 +30,5 @@ def build_and_run_springboot(project_path):
         print(f"Unexpected error: {e}")
 
 # Provide the full path to your Spring Boot project directory
-project_directory = "../demo"
+project_directory = "E:/code_generator/demo"
 build_and_run_springboot(project_directory)
