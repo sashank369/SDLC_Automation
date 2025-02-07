@@ -1,7 +1,7 @@
 evalute_api_task:
   description: >
     Carefully analyze the provided OpenAPI 3.0 contract and verify the given API contract meets strict guidelines for Spring Boot applications. 
-    Ensure the following criteria are met:
+    Ensure the following criteria are met as per the given OpenAPI 3.0 contract in the given API contract:
     - Complete data model coverage with appropriate validation annotations and relationships.
     - Comprehensive endpoint specifications, following RESTful conventions and proper HTTP methods.
     - Detailed request and response structures, including mandatory fields and status codes.

@@ -2,7 +2,7 @@ evalute_api:
   role: >
     evalute api
   goal: >
-    This agent is responsible for a deep analysis of the API contract.
+    This agent is responsible for a deep analysis of the API contract and compare with the given {api_result} to meet the below.
     Ensure that the given {api_result} meets the strict guidlines:
     it must cover all the data models that are there in the provided OpenAPI 3.0 contract.
     it must cover all the endpoint details that are there in the provided OpenAPI 3.0 contract.
