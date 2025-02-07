@@ -13,6 +13,7 @@ import requests
 import zipfile
 import os
 import openai
+import subprocess
 
 # Load API key from environment variable
 openai.api_key = os.getenv("OPEN_API_KEY")
@@ -86,13 +87,17 @@ class PoemFlow(Flow[PoemState]):
 
     @listen(generate_spring_boot_project)
     def configure_application_properties(self):
-        properties_content = """spring.datasource.url=jdbc:h2:mem:testdb
-spring.datasource.driverClassName=org.h2.Driver
-spring.datasource.username=sa
-spring.datasource.password=password
-spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-spring.h2.console.enabled=true
-"""
+#         properties_content = """spring.datasource.url=jdbc:h2:mem:testdb
+# spring.datasource.driverClassName=org.h2.Driver
+# spring.datasource.username=sa
+# spring.datasource.password=password
+# spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+# spring.h2.console.enabled=true
+# """
+        properties_content = os.getenv("SPRING_BOOT_PROPERTIES", "")
+    
+        # Replace escape sequences with actual newlines
+        properties_content = properties_content.replace("\\n", "\n")
 
         properties_file_path = os.path.join(self.state.project_name, "src", "main", "resources", "application.properties")
 
@@ -167,6 +172,41 @@ spring.h2.console.enabled=true
         print("Model result: ", result.raw)
         self.state.entity_result = result.raw  # Save the result in state
         print("Entity Model successfully and stored in state.")
+    
+    @listen(generate_model)
+    def build_and_run_springboot(self):
+        try:
+            project_directory = os.path.abspath(self.state.project_name)
+            # Navigate to the Spring Boot project directory
+            if os.path.exists(project_directory):
+                os.chdir(project_directory)
+                print("Directory exists:", os.listdir(project_directory))
+            else:
+                print("Directory does not exist:", project_directory)
+                return
+            
+            # Build the project
+            build_command = ["mvn", "clean", "package"]
+            build_process=subprocess.run(build_command,stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
+            if build_process.returncode == 0:
+                print("Build Success!")
+            else:
+                print("Build Output:", build_process.stdout.decode())
+                return
+
+            # Run the built JAR file
+            jar_file = f"target/{self.state.project_name}-0.0.1-SNAPSHOT.jar"  # Adjust according to your project
+            run_command = ["java", "-jar", jar_file]
+            subprocess.Popen(run_command,shell=True)
+
+            print("Spring Boot application is running...")
+        except subprocess.CalledProcessError as e:
+            print(f"Error during build or execution: {e}")
+        except FileNotFoundError as e:
+            print(f"Directory not found: {project_directory}. Please check the path.")
+        except Exception as e:
+            print(f"Unexpected error: {e}")
+
 
 def kickoff():
     poem_flow = PoemFlow()

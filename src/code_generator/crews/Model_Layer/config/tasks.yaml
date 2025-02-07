@@ -14,6 +14,9 @@ generate_model_layer:
             - Create REST controllers with appropriate mappings for all API endpoints.
             - Compare generated controllers against the task list provided by the tech lead and perform any missing tasks.
         - Don't create the main class again if its there already and do all the required import Carefully.
+
+        -Please incorporate the following feedback if present:
+        {feedback}
   expected_output: >
     A complete and runnable Spring Boot project written to {models_path} in the appropriate folder structure, including all the entity,service,repositary and controller files. All persistence-layer code should use `jakarta.persistence`.
 

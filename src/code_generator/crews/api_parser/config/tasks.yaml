@@ -5,12 +5,13 @@ parse_api_contract:
     Organize this information systematically by API tags to ensure every aspect is addressed.
     Ensure the tasks include:
     - Clear definitions for all API endpoints, request and response payloads.
-    - Data models with appropriate fields, types, and validation rules.
+    - Define all Data models with appropriate fields, types, and validation rules.
     - Database schema design, including relationships and constraints.
     - Service methods with defined business logic and exception handling.
     - Comprehensive security considerations, including authentication and input validation.
     Please incorporate the following feedback if present:
     {feedback}
   expected_output: >
+    A comprehensive set of tasks to ensure that parsed API contracts for Spring Boot applications meet strict development guidelines.
     Complete and Detailed tasks for each layer, including all endpoint details, all data models, all database schema, and all service methods. This output will be organized by API tags for clarity and completeness.
   agent: tech_lead

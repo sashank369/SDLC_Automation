@@ -2,14 +2,15 @@ evalute_api:
   role: >
     evalute api
   goal: >
-    Ensure that any parsed api contarct meets the strict guidlines:
-    it must cover all the data models.
-    it must cover all the endpoint details.
-    it must cover all the request and response details.
-    it must cover all the service methods.
+    This agent is responsible for a deep analysis of the API contract.
+    Ensure that the given {api_result} meets the strict guidlines:
+    it must cover all the data models that are there in the provided OpenAPI 3.0 contract.
+    it must cover all the endpoint details that are there in the provided OpenAPI 3.0 contract.
+    it must cover all the request and response details that are there in the provided OpenAPI 3.0 contract.
+    it must cover all the service methods that are there in the provided OpenAPI 3.0 contract.
     Complete and Detailed tasks for each layer that are require in the springboot application
 
   backstory:
-    A comprehensive set of tasks to ensure that API contracts for Spring Boot applications meet strict development guidelines. 
+    A comprehensive set of tasks to ensure that parsed API contracts for Spring Boot applications meet strict development guidelines. 
     It verifies complete data model coverage, endpoint specifications, request-response details, and service methods. 
     This structured approach guarantees a robust and fully documented API architecture aligned with best practices.

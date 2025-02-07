@@ -48,50 +48,51 @@ class ModelLayer:
             agent=self.model_developer()
         )
 
-    @task
-    def verify_application(self) -> Task:
-        def verification_logic():
-            try:
-                project_dir = os.path.abspath("/demo1")
-                if not os.path.exists(project_dir):
-                    return f"Directory {project_dir} does not exist. Check the project path."
+    # @task
+    # def verify_application(self) -> Task:
+    #     def verification_logic():
+    #         try:
+    #             project_dir = os.path.abspath(r"E:\code_generator\demo")
+    #             if not os.path.exists(project_dir):
+    #                 return f"Directory {project_dir} does not exist. Check the project path."
 
-                # Compile the Spring Boot project
-                build_process = subprocess.run(
-                    ["./mvnw", "clean", "package"],
-                    cwd=project_dir,
-                    capture_output=True, text=True, check=True
-                )
-                print("Build Output:", build_process.stdout)
-                print("Build Errors:", build_process.stderr)
-                if build_process.returncode != 0:
-                    return f"Build failed: {build_process.stderr}"
+    #             # Compile the Spring Boot project
+    #             build_command = ["mvn", "clean", "package"]
+    #             build_process = subprocess.check_call(
+    #                 build_command,
+    #                 cwd=project_dir,
+    #                 capture_output=True, text=True, check=True,shell=True
+    #             )
+    #             print("Build Output:", build_process.stdout)
+    #             print("Build Errors:", build_process.stderr)
+    #             if build_process.returncode != 0:
+    #                 return f"Build failed: {build_process.stderr}"
 
-                # Check if the jar file exists
-                jar_file_path = os.path.join(project_dir, "target", "app.jar")
-                if not os.path.exists(jar_file_path):
-                    return f"JAR file not found at {jar_file_path}. Check the build process."
+    #             # Check if the jar file exists
+    #             jar_file_path = os.path.join(project_dir, "target","", "app.jar")
+    #             if not os.path.exists(jar_file_path):
+    #                 return f"JAR file not found at {jar_file_path}. Check the build process."
 
-                # Run the generated Spring Boot application
-                run_process = subprocess.run(
-                    ["java", "-jar", jar_file_path],
-                    cwd=project_dir,
-                    capture_output=True, text=True, check=True
-                )
-                print("Run Output:", run_process.stdout)
-                return "Application ran successfully."
+    #             # Run the generated Spring Boot application
+    #             run_process = subprocess.Popen(
+    #                 ["java", "-jar", jar_file_path],
+    #                 cwd=project_dir,
+    #                 capture_output=True, text=True, check=True
+    #             )
+    #             print("Run Output:", run_process.stdout)
+    #             return "Application ran successfully."
 
-            except subprocess.CalledProcessError as e:
-                error_message = f"Error during execution: {e.stderr or e.stdout}"
-                print(error_message)
-                return error_message
+    #         except subprocess.CalledProcessError as e:
+    #             error_message = f"Error during execution: {e.stderr or e.stdout}"
+    #             print(error_message)
+    #             return error_message
 
-        return Task(
-            agent=self.model_developer(),
-            description="Verifies if the generated Spring Boot application is runnable.",
-            expected_output="Application runs successfully without errors.",
-            task_fn=verification_logic
-        )
+    #     return Task(
+    #         agent=self.model_developer(),
+    #         description="Verifies if the generated Spring Boot application is runnable.",
+    #         expected_output="Application runs successfully without errors.",
+    #         task_fn=verification_logic
+    #     )
 
 
     @crew
@@ -102,7 +103,7 @@ class ModelLayer:
 
         return Crew(
             agents=self.agents,  # Automatically created by the @agent decorator
-            tasks=self.tasks + [self.verify_application()],  # Automatically created by the @task decorator
+            tasks=self.tasks,  # Automatically created by the @task decorator
             process=Process.sequential,
             verbose=True,
         )
