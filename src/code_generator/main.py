@@ -19,7 +19,7 @@ import subprocess
 openai.api_key = os.getenv("OPEN_API_KEY")
 
 
-class PoemState(BaseModel):
+class CodeGeneratorState(BaseModel):
     project_name: str = ""
     package_name: str = ""
     dependencies: str = ""
@@ -34,11 +34,12 @@ class PoemState(BaseModel):
     feedback:Optional[str]=None
     valid:bool=False
     retry_count:int=0
+    build_output:Optional[str]=None
     
     
 
 
-class PoemFlow(Flow[PoemState]):
+class CodeGenerator(Flow[CodeGeneratorState]):
 
     @start()
     def Intialization(self):
@@ -125,7 +126,7 @@ class PoemFlow(Flow[PoemState]):
         print("API parsed successfully and stored in state.")
     
     @router(api_parser)
-    def evaluate_api_parser(self):
+    def evaluate_api(self):
         if self.state.retry_count >3:
             return "max_retry"
         # Evaluate the result of the API parser
@@ -147,8 +148,8 @@ class PoemFlow(Flow[PoemState]):
         return "completed"
     
     
-    @listen("completed")
-    def generate_model(self):
+    @router(or_("completed","build_fail"))
+    def SpringBootApplication(self):
         print("Generating model")
         print("API Result: ", self.state.api_result)
         # Example base path
@@ -166,14 +167,15 @@ class PoemFlow(Flow[PoemState]):
                 'api_result': self.state.api_result,
                 'project_name': self.state.project_name,
                 'package_name': self.state.package_name,
-                'models_path': models_path
+                'models_path': models_path,
+                "feedback":self.state.api_result
             })
         )
         print("Model result: ", result.raw)
         self.state.entity_result = result.raw  # Save the result in state
         print("Entity Model successfully and stored in state.")
     
-    @listen(generate_model)
+    @listen(SpringBootApplication)
     def build_and_run_springboot(self):
         try:
             project_directory = os.path.abspath(self.state.project_name)
@@ -191,8 +193,9 @@ class PoemFlow(Flow[PoemState]):
             if build_process.returncode == 0:
                 print("Build Success!")
             else:
-                print("Build Output:", build_process.stdout.decode())
-                return
+                self.state.build_output=build_process.stdout.decode()
+                print("Build Output:", self.state.build_output)
+                return "build_fail"
 
             # Run the built JAR file
             jar_file = f"target/{self.state.project_name}-0.0.1-SNAPSHOT.jar"  # Adjust according to your project
@@ -209,12 +212,12 @@ class PoemFlow(Flow[PoemState]):
 
 
 def kickoff():
-    poem_flow = PoemFlow()
+    poem_flow = CodeGenerator()
     poem_flow.kickoff()
 
 
 def plot():
-    poem_flow = PoemFlow()
+    poem_flow = CodeGenerator()
     poem_flow.plot()
 
 

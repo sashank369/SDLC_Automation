@@ -21,7 +21,7 @@ class ApiParser:
             verbose=True,
             # llm=self.llm,
             tools=[FileReadTool(file_path=os.getenv('API_CONTRACT_PATH'))],
-            memory=False,
+            memory=True,
             # max_iter=70
         )
 

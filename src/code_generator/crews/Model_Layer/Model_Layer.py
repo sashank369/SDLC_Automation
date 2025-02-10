@@ -33,7 +33,7 @@ class ModelLayer:
             verbose=True,
             llm="gpt-4o",
             tools=[FileWriterTool()],
-            memory=False,
+            memory=True,
         )
 
     # To learn more about structured task outputs,

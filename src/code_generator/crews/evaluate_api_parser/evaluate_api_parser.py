@@ -22,20 +22,20 @@ class EvaluateApiParser:
     tasks_config = 'config/tasks.yaml'
 
     @agent
-    def evalute_api(self) -> Agent:
+    def evaluate_api(self) -> Agent:
         """Create the API evaluation agent."""
         return Agent(
-            config=self.agents_config['evalute_api'],
+            config=self.agents_config['evaluate_api'],
             verbose=True,
             tools=[FileReadTool(file_path=os.getenv('API_CONTRACT_PATH'))],
-            memory=False,
+            memory=True,
         )
 
     @task
-    def evalute_api_task(self) -> Task:
+    def evaluate_api_task(self) -> Task:
         """Define the evaluation task."""
         return Task(
-            config=self.tasks_config['evalute_api_task'],
+            config=self.tasks_config['evaluate_api_task'],
             output_pydantic=EvaluateApiParserverify,
         )
 
