@@ -5,6 +5,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from crewai.flow.flow import Flow, listen, start,router,or_
+import shutil
 
 from code_generator.crews.api_parser.api_parser import ApiParser
 from code_generator.crews.Model_Layer.Model_Layer import ModelLayer
@@ -31,10 +32,10 @@ class CodeGeneratorState(BaseModel):
     api_result: dict = {}
     entity_result: dict = {}
     model_path: str = ""
-    feedback:Optional[str]=None
+    feedback:Optional[str]=""
     valid:bool=False
     retry_count:int=0
-    build_output:Optional[str]=None
+    build_output:Optional[str]=""
     
     
 
@@ -45,7 +46,7 @@ class CodeGenerator(Flow[CodeGeneratorState]):
     def Intialization(self):
         print("Provide the details")
         self.state.project_name = input("Enter the project name: ")
-        self.state.package_name = input("Enter the package name (e.g., com.example): ")
+        self.state.package_name = input("Enter the package name (default com.example): ")
         self.state.dependencies = input("Enter the dependencies (comma separated, e.g., web,jpa): ").split(',')
         self.state.java_version = input("Enter Java version (default 11): ") or '11'
         self.state.language = input("Enter language (java/kotlin, default java): ") or 'java'
@@ -148,29 +149,41 @@ class CodeGenerator(Flow[CodeGeneratorState]):
         return "completed"
     
     
-    @router(or_("completed","build_fail"))
+    @router(or_("completed","buildfail"))
     def SpringBootApplication(self):
         print("Generating model")
         print("API Result: ", self.state.api_result)
         # Example base path
-        base_path = os.path.join(self.state.project_name, "src", "main", "java")
+        base_path = os.path.join(os.path.abspath(self.state.project_name), "src", "main", "java")
         # Convert package name to directory path
         package_path = self.state.package_name.replace('.', os.sep)
         # Full path to the models directory
         models_path = os.path.join(base_path, package_path,self.state.project_name)
+        print ("models_path",models_path)
+        print(os.path.exists(models_path))
+        if os.path.exists(models_path):
+            print(f"Cleaning existing directory contents: {models_path}")
+        
+            # Delete only contents inside models_path, but not the folder itself
+            for filename in os.listdir(models_path):
+                file_path = os.path.join(models_path, filename)
+                if os.path.isdir(file_path):
+                    shutil.rmtree(file_path)  # Delete subdirectories
+            
         self.state.model_path = models_path
         print(f"Models directory path: {models_path}")
-        result = (
-            ModelLayer()
-            .crew()
-            .kickoff(inputs={
-                'api_result': self.state.api_result,
-                'project_name': self.state.project_name,
-                'package_name': self.state.package_name,
-                'models_path': models_path,
-                "feedback":self.state.api_result
-            })
-        )
+        kickoff_inputs = {
+            'api_result': self.state.api_result,
+            'project_name': self.state.project_name,
+            'package_name': self.state.package_name,
+            'models_path': models_path,
+            'feedback':self.state.build_output
+        }
+
+        
+
+        result = ModelLayer().crew().kickoff(inputs=kickoff_inputs)
+
         print("Model result: ", result.raw)
         self.state.entity_result = result.raw  # Save the result in state
         print("Entity Model successfully and stored in state.")
@@ -179,6 +192,7 @@ class CodeGenerator(Flow[CodeGeneratorState]):
     def build_and_run_springboot(self):
         try:
             project_directory = os.path.abspath(self.state.project_name)
+            print(f"Project directory: {project_directory}")
             # Navigate to the Spring Boot project directory
             if os.path.exists(project_directory):
                 os.chdir(project_directory)
@@ -195,7 +209,7 @@ class CodeGenerator(Flow[CodeGeneratorState]):
             else:
                 self.state.build_output=build_process.stdout.decode()
                 print("Build Output:", self.state.build_output)
-                return "build_fail"
+                return "buildfail"
 
             # Run the built JAR file
             jar_file = f"target/{self.state.project_name}-0.0.1-SNAPSHOT.jar"  # Adjust according to your project
