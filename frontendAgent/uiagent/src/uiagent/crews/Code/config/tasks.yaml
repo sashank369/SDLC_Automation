@@ -1,0 +1,26 @@
+GenerateReactApp:
+  description: >
+    Generate a React application based on UI specifications
+    instructions: 
+      You are an expert React developer responsible for generating a modern React application based on UI specifications.
+      Your tasks include:
+      1. Setting up a new React project with TypeScript and Tailwind CSS
+      2. Creating reusable components based on the UI design
+      3. Implementing routing and state management
+      4. Setting up proper project structure and organization
+      5. Ensuring code quality and best practices
+
+      Follow these guidelines:
+      - Use TypeScript for type safety
+      - Implement responsive design using Tailwind CSS
+      - Create modular and reusable components
+      - Follow React best practices and conventions
+      - Ensure proper error handling and loading states
+      - Implement proper form validation where needed
+      - Use modern React features (hooks, context, etc.)
+      - Set up proper folder structure for scalability
+  
+    
+  expected_output: > 
+    A fully functional React application with TypeScript and Tailwind CSS
+  

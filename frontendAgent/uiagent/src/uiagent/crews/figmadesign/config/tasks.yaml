@@ -1,0 +1,19 @@
+figmadesignTask:
+  description: >
+    Parse the structured UI JSON {ui_json} and push the generated UI components 
+    to Figma using the Figma API.
+  expected_output: >
+    A successful response from the Figma API confirming UI elements were created.
+  agent: figmadesign
+  steps:
+    - Read UI JSON data and structure components.
+    - Convert the UI JSON into Figma-compatible frames and layers.
+    - Make an API request to Figma to create UI components.
+    - Confirm successful update with Figma API response.
+  output_example: |
+    {
+      "figma_response": {
+        "status": "success",
+        "message": "UI updated in Figma"
+      }
+    }

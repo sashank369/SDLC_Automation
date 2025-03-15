@@ -3,6 +3,8 @@ from crewai.project import CrewBase, agent, crew, task
 from crewai_tools import FileReadTool
 from dotenv import load_dotenv
 import os
+from langchain_openai import ChatOpenAI
+
 load_dotenv()
 
 @CrewBase
@@ -10,7 +12,8 @@ class ApiParser:
  
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
-
+    provider = os.getenv("PROVIDER", "openai") 
+    llm = ChatOpenAI(model=os.getenv("MODEL"),openai_api_key=os.getenv("OPENAI_API_KEY"), model_kwargs={"litellm_provider": provider})
     @agent
     def tech_lead(self) -> Agent:
         if 'tech_lead' not in self.agents_config:
@@ -19,7 +22,7 @@ class ApiParser:
             config=self.agents_config['tech_lead'],
             # allow_delegation=True,
             verbose=True,
-            # llm=self.llm,
+            llm=self.llm,
             tools=[FileReadTool(file_path=os.getenv('API_CONTRACT_PATH'))],
             memory=True,
             # max_iter=70

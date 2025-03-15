@@ -5,6 +5,8 @@ from crewai_tools import FileReadTool
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
+from langchain_openai import ChatOpenAI
+
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -20,6 +22,8 @@ class EvaluateApiParser:
 
     agents_config = 'config/agents.yaml'
     tasks_config = 'config/tasks.yaml'
+    provider = os.getenv("PROVIDER", "openai") 
+    llm = ChatOpenAI(model=os.getenv("MODEL"),openai_api_key=os.getenv("OPENAI_API_KEY"), model_kwargs={"litellm_provider": provider})
 
     @agent
     def evaluate_api(self) -> Agent:
@@ -27,6 +31,7 @@ class EvaluateApiParser:
         return Agent(
             config=self.agents_config['evaluate_api'],
             verbose=True,
+            llm=self.llm,
             tools=[FileReadTool(file_path=os.getenv('API_CONTRACT_PATH'))],
             memory=True,
         )

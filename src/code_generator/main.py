@@ -10,11 +10,13 @@ import shutil
 from code_generator.crews.api_parser.api_parser import ApiParser
 from code_generator.crews.Model_Layer.Model_Layer import ModelLayer
 from code_generator.crews.evaluate_api_parser.evaluate_api_parser import EvaluateApiParser
+from code_generator.crews.code_fix.code_fix import Code_fix
 import requests
 import zipfile
 import os
 import openai
 import subprocess
+import re
 
 # Load API key from environment variable
 openai.api_key = os.getenv("OPEN_API_KEY")
@@ -89,13 +91,7 @@ class CodeGenerator(Flow[CodeGeneratorState]):
 
     @listen(generate_spring_boot_project)
     def configure_application_properties(self):
-#         properties_content = """spring.datasource.url=jdbc:h2:mem:testdb
-# spring.datasource.driverClassName=org.h2.Driver
-# spring.datasource.username=sa
-# spring.datasource.password=password
-# spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
-# spring.h2.console.enabled=true
-# """
+
         properties_content = os.getenv("SPRING_BOOT_PROPERTIES", "")
     
         # Replace escape sequences with actual newlines
@@ -149,7 +145,7 @@ class CodeGenerator(Flow[CodeGeneratorState]):
         return "completed"
     
     
-    @router(or_("completed","buildfail"))
+    @router(or_("completed"))
     def SpringBootApplication(self):
         print("Generating model")
         print("API Result: ", self.state.api_result)
@@ -188,7 +184,7 @@ class CodeGenerator(Flow[CodeGeneratorState]):
         self.state.entity_result = result.raw  # Save the result in state
         print("Entity Model successfully and stored in state.")
     
-    @listen(SpringBootApplication)
+    @router(or_(SpringBootApplication,"buildfix"))
     def build_and_run_springboot(self):
         try:
             project_directory = os.path.abspath(self.state.project_name)
@@ -208,7 +204,15 @@ class CodeGenerator(Flow[CodeGeneratorState]):
                 print("Build Success!")
             else:
                 self.state.build_output=build_process.stdout.decode()
-                print("Build Output:", self.state.build_output)
+                error_log = self.state.build_output
+                print("Build Error Log:", error_log)
+                error_pattern = r"\[ERROR\]\s*(.*\.java):\[(\d+),(\d+)\]\s*(.*)"  # Matches error lines
+                errors = re.findall(error_pattern, error_log)
+                print("Build Output:", errors)
+                
+                # Printing thr errors paths and the message associated with it
+                for file_path, line, col, error_msg in errors:
+                    print(f"Fixing error in: {file_path} at line {line}, col {col},error message: {error_msg}")
                 return "buildfail"
 
             # Run the built JAR file
@@ -223,6 +227,12 @@ class CodeGenerator(Flow[CodeGeneratorState]):
             print(f"Directory not found: {project_directory}. Please check the path.")
         except Exception as e:
             print(f"Unexpected error: {e}")
+            
+    # @router("buildfail")
+    # def buildfail(self):
+    #     result=Code_fix().crew().kickoff(inputs={"build_output":self.state.build_output})
+    #     print(result)
+    #     return"buildfix"
 
 
 def kickoff():
