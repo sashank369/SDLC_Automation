@@ -5,7 +5,6 @@ generate_model_layer:
             - Generate JPA entity classes using the `jakarta.persistence` package (not `javax.persistence`) and add Lombok annotations (`@Getter`, `@Setter`, and optionally `@NoArgsConstructor` and `@AllArgsConstructor`) to entity classes to auto-generate getters and setters.
             - Create Spring Data JPA repository interfaces.
             - Append `_entity` to all table names in the `schema.sql` file and JPA `@Table` annotations to avoid clashes with reserved keywords and ensuring that `@Table` annotations match the table names in `schema.sql`.
-            - Write `schema.sql` and `data.sql` files for the H2 database in `/src/main/resources/`.
             - Compare generated JPA entity classes and created JPA repository interfaces against the task list provided by the tech lead and perform any missing tasks.
         - Service Layer:
             - Implement business logic methods to interact with the repository layer for CRUD operations for all API endpoints.
@@ -14,12 +13,10 @@ generate_model_layer:
             - Create REST controllers with appropriate mappings for all API endpoints.
             - Compare generated controllers against the task list provided by the tech lead and perform any missing tasks.
         - Don't create the main class again if its there already and do all the required import Carefully.
-        - integrate the Swagger/OpenAPI to get the api contract and documentation for the application. Add the necessary dependencies to the `pom.xml` file for the Spring Boot application.
-        - Please incorporate the following feedback if present:
-        {feedback}
+    
   expected_output: >
     A complete and runnable Spring Boot project written to {models_path} in the appropriate folder structure, including all the entity,service,repositary and controller files. All persistence-layer code should use `jakarta.persistence`. 
-    When errors are reported in the build feedback, only the erroneous parts of existing files should be fixed and not regenerated from scratch.
+    I don't want any suggestions like "Can write similarly " or " Define request classes here for simplicity" I want you to write each and every line of code.
 
 
 

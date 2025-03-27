@@ -1,0 +1,9 @@
+validate_generated_code:
+  description: >
+      Based on the {api_result} and the generated code stored in final_result, perform the following tasks:
+        - Verify that every endpoint, model, and API specification in {api_result} is implemented in the generated code.
+        - Check that the code does not have any compilation issues such as missing imports, syntax errors, or unresolved references.
+        - Cross-check each API element from {api_result} with its corresponding implementation in final_result.
+  expected_output: >
+      - The validation result should return "Valid" if all API specifications are implemented correctly and the code compiles without errors.
+      - If issues are detected, return "Invalid" along with detailed error messages describing the missing or erroneous parts.

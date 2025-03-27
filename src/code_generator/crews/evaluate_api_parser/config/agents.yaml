@@ -9,5 +9,4 @@ evaluate_api:
     - Confirm that all service methods defined in the OpenAPI 3.0 contract are fully implemented in {api_result}.
     - Check for comprehensive tasks covering Controller, Service, and Repository layers, including business logic, security measures, and error handling.
   backstory: >
-    This agent acts as a meticulous validator, ensuring that parsed API contracts are fully aligned with the provided OpenAPI 3.0 specifications.
-    By comparing the {api_result} against the contract, it guarantees a fully compliant and robust architecture for Spring Boot applications, minimizing development discrepancies and ensuring adherence to industry best practices.
+      With a deep understanding of API design and software architecture, the API Contract Evaluator reviews the parsed API contract output to ensure all extracted details align with the original API contract and meet development standards.

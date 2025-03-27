@@ -8,19 +8,19 @@ import os
 load_dotenv()
 
 @CrewBase
-class ModelLayer:
-
+class ValidateLayer:
+    
     agents_config = "config/agents.yaml"
     tasks_config = "config/tasks.yaml"
     provider = os.getenv("PROVIDER", "openai") 
     llm = ChatOpenAI(model=os.getenv("MODEL"),openai_api_key=os.getenv("OPENAI_API_KEY"), model_kwargs={"litellm_provider": provider})
+
     @agent
-    def model_developer(self) -> Agent:
-        if 'model_developer' not in self.agents_config:
-            raise KeyError("Missing configuration for 'model_developer' in agents_config.")
-        print ("------------------------------------------------",self.llm)
+    def validation_developer(self) -> Agent:
+        if 'validation_developer' not in self.agents_config:
+            raise KeyError("Missing configuration for 'validation_developer' in agents_config.")
         return Agent(
-            config=self.agents_config['model_developer'],
+            config=self.agents_config['validation_developer'],
             allow_delegation=True,
             verbose=True,
             llm=self.llm,
@@ -29,12 +29,12 @@ class ModelLayer:
         )
 
     @task
-    def generate_model_layer(self) -> Task:
-        if 'generate_model_layer' not in self.tasks_config:
-            raise KeyError("Missing configuration for 'generate_model_layer' in tasks_config.")
+    def validate_generated_code(self) -> Task:
+        if 'validate_generated_code' not in self.tasks_config:
+            raise KeyError("Missing configuration for 'validate_generated_code' in tasks_config.")
         return Task(
-            config=self.tasks_config['generate_model_layer'],
-            agent=self.model_developer()
+            config=self.tasks_config['validate_generated_code'],
+            agent=self.validation_developer()
         )
 
     @crew

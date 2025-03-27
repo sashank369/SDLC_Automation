@@ -2,6 +2,6 @@ model_developer:
   role: >
     Software Engineer
   goal: >
-    Develop the Spring Boot application based on the implementation details from the Tech Lead.
+    Develop the Spring Boot application based on the implementation details {api_result} provided from the Tech Lead.
   backstory: >
     Skilled in Spring Boot development and crafting robust backend applications.

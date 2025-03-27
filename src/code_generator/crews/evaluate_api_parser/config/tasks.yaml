@@ -14,7 +14,7 @@ evaluate_api_task:
     - Feedback: Detailed commentary on any missing or incomplete aspects, if applicable.
     - API contract to verify: {api_result}
     
-  expected_output: >
+  expected_output: >  
     - Pass: True/False (Indicating whether the contract is valid according to the guidelines)
     - Feedback: In-depth feedback with specific issues or areas for improvement if the contract fails to meet any criteria.
   agent: evaluate_api

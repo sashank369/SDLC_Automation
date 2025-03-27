@@ -1,0 +1,249 @@
+```yaml
+openapi: 3.0.0
+info:
+  title: User Registration API
+  description: API for user registration, validation, and password recovery.
+  version: 1.0.0
+servers:
+  - url: https://api.example.com/v1
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  minLength: 8
+                  example: StrongPass123
+                confirmPassword:
+                  type: string
+                  example: StrongPass123
+                agreeToTerms:
+                  type: boolean
+                  example: true
+                promotionalEmails:
+                  type: boolean
+                  example: false
+                thirdPartySharing:
+                  type: boolean
+                  example: false
+              required:
+                - email
+                - password
+                - confirmPassword
+                - agreeToTerms
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User registered successfully
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 12345
+                      email:
+                        type: string
+                        example: user@example.com
+        '400':
+          description: Bad Request, validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  details:
+                    type: object
+                    additionalProperties: true
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: An error occurred
+
+  /register/validation:
+    get:
+      summary: Validate email and phone number
+      parameters:
+        - name: email
+          in: query
+          required: false
+          schema:
+            type: string
+            format: email
+            example: user@example.com
+        - name: phoneNumber
+          in: query
+          required: false
+          schema:
+            type: string
+            example: '+1234567890'
+      responses:
+        '200':
+          description: Validation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email/phone is valid
+        '400':
+          description: Bad Request, validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  details:
+                    type: object
+                    additionalProperties: true
+
+  /register/socialmedia:
+    post:
+      summary: Register a new user via social media
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                socialMedia:
+                  type: string
+                  enum: [facebook, google, twitter]
+                  example: google
+                socialMediaToken:
+                  type: string
+                  example: abcdef123456
+              required:
+                - socialMedia
+                - socialMediaToken
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User registered successfully
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 12345
+                      socialMedia:
+                        type: string
+                        example: google
+        '400':
+          description: Bad Request, validation failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Validation failed
+                  details:
+                    type: object
+                    additionalProperties: true
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: An error occurred
+
+  /register/forgotpassword:
+    post:
+      summary: Recover forgotten password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+              required:
+                - email
+      responses:
+        '200':
+          description: Password recovery initiated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Password recovery email sent
+        '400':
+          description: Bad Request, email does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email does not exist
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: An error occurred
+
+components:
+  securitySchemes:
+    apiKey:
+      type: apiKey
+      in: header
+      name: X-API-KEY
+```

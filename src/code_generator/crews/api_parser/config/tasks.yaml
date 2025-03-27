@@ -1,22 +1,6 @@
 parse_api_contract: 
   description: >
-    Parse and thoroughly analyze the provided OpenAPI 3.0 contract to extract comprehensive details for Spring Boot application development.
-    Break down the requirements into actionable tasks for the following layers: Controller, Service, and Repository, including all necessary data models.
-    Ensure a systematic and organized approach by categorizing tasks by API tags.
-    Include the following critical aspects:
-    - Clear and complete definitions for all API endpoints, request and response payloads, and HTTP methods.
-    - Detailed specifications for data models, including field definitions, data types, validation rules, and relationships.
-    - Database schema design, covering relationships, constraints, and indexing.
-    - Service methods with defined business logic, exception handling, and input/output validation.
-    - Comprehensive security considerations such as authentication, authorization, and input sanitization.
-    - Thorough logging and monitoring strategies for all API operations.
-    Please incorporate the following feedback if present:
-    {feedback}
+    Parse and carefully analyze the provided OpenAPI 3.0 contract and extract all the necessary details to define the implementation requirements. Break these requirements down into clear tasks for building the Controller, Service, and Repository layers, along with all the data models needed for each API. Organize this information systematically by API tags to ensure every aspect is addressed.
   expected_output: >
-    A well-organized, detailed set of tasks to build a fully functional Spring Boot application from the parsed API contract.
-    This includes:
-    - Fully defined endpoint specifications.
-    - Comprehensive data models and database schema.
-    - Defined service methods with business logic and exception handling.
-    - Tasks categorized by API tags for clarity and completeness.
-  agent: tech_lead
+    Complete and Detailed tasks for each layer, including all endpoint details, all data models, all database schema, and all service methods.Organize this information systematically by API tags to ensure every aspect is addressed.
+    Give each and every information like attributes in data models,etc. Because based on the output the next agents has to build the layers.

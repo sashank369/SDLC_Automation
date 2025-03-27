@@ -38,6 +38,7 @@ class CodeGeneratorState(BaseModel):
     valid:bool=False
     retry_count:int=0
     build_output:Optional[str]=""
+    count:int=0
     
     
 
@@ -53,8 +54,43 @@ class CodeGenerator(Flow[CodeGeneratorState]):
         self.state.java_version = input("Enter Java version (default 11): ") or '11'
         self.state.language = input("Enter language (java/kotlin, default java): ") or 'java'
 
-    @listen(Intialization)
+
+
+    @listen(or_(Intialization,"retry"))
+    def api_parser(self):
+        print("parsing the api")
+        self.state.count+=1
+        result = (
+            ApiParser()
+            .crew()
+            .kickoff()
+        )
+
+        # print("api result: ", result.raw)
+        self.state.api_result = result.raw  # Save the result in state
+        print("API parsed successfully and stored in state.")
+
+    @router(api_parser)
+    def evaluate_api(self):
+        if self.state.retry_count >3:
+            return "max_retry"
+        # Evaluate the result of the API parser
+        self.state.count+=1
+        result=EvaluateApiParser().crew().kickoff(inputs={"api_result":self.state.api_result})
+        self.state.valid=result["valid"]
+        self.state.feedback=result["feedback"]
+        
+        # print("valid",self.state.valid)
+        # print("feedback",self.state.feedback)
+        self.state.retry_count+=1
+        
+        if self.state.valid:
+            return "completed"
+        return "retry"
+
+    @listen(or_("completed","max_retry"))
     def generate_spring_boot_project(self):
+        self.state.count+=1
         params = {
             'type': f'{self.state.build_type}-project',
             'language': self.state.language,
@@ -92,10 +128,18 @@ class CodeGenerator(Flow[CodeGeneratorState]):
     @listen(generate_spring_boot_project)
     def configure_application_properties(self):
 
-        properties_content = os.getenv("SPRING_BOOT_PROPERTIES", "")
+        # properties_content = os.getenv("SPRING_BOOT_PROPERTIES", "")
     
-        # Replace escape sequences with actual newlines
-        properties_content = properties_content.replace("\\n", "\n")
+        # # Replace escape sequences with actual newlines
+        # properties_content = properties_content.replace("\\n", "\n")
+        self.state.count+=1
+        properties_content = """spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+"""
 
         properties_file_path = os.path.join(self.state.project_name, "src", "main", "resources", "application.properties")
 
@@ -107,48 +151,19 @@ class CodeGenerator(Flow[CodeGeneratorState]):
 
         print(f"application.properties configured successfully at {properties_file_path}")
 
-
-
-    @listen(or_(configure_application_properties,"retry"))
-    def api_parser(self):
-        print("parsing the api")
-        result = (
-            ApiParser()
-            .crew()
-            .kickoff(inputs={"feedback":self.state.feedback})
-        )
-
-        print("api result: ", result.raw)
-        self.state.api_result = result.raw  # Save the result in state
-        print("API parsed successfully and stored in state.")
-    
-    @router(api_parser)
-    def evaluate_api(self):
-        if self.state.retry_count >3:
-            return "max_retry"
-        # Evaluate the result of the API parser
-        result=EvaluateApiParser().crew().kickoff(inputs={"api_result":self.state.api_result})
-        self.state.valid=result["valid"]
-        self.state.feedback=result["feedback"]
-        
-        print("valid",self.state.valid)
-        print("feedback",self.state.feedback)
-        self.state.retry_count+=1
-        
-        if self.state.valid:
-            return "completed"
-        return "retry"
-    
-    @router("max_retry")
-    def max_retry_limit(self):
-        print("reached the try limit proceding with the same one")
-        return "completed"
     
     
-    @router(or_("completed"))
+    @router(configure_application_properties)
     def SpringBootApplication(self):
         print("Generating model")
-        print("API Result: ", self.state.api_result)
+        self.state.count+=1
+        # print("API Result: ", self.state.api_result)
+        file_path = "api_parser_result.md"
+
+        # Write the API result to the file
+        with open(file_path, "w") as file:
+            file.write(f"api parser result: {self.state.api_result}\n")
+
         # Example base path
         base_path = os.path.join(os.path.abspath(self.state.project_name), "src", "main", "java")
         # Convert package name to directory path
@@ -182,51 +197,51 @@ class CodeGenerator(Flow[CodeGeneratorState]):
 
         print("Model result: ", result.raw)
         self.state.entity_result = result.raw  # Save the result in state
-        print("Entity Model successfully and stored in state.")
+        print("Entity Model successfully and stored in state. With count :",self.state.count)
     
-    @router(or_(SpringBootApplication,"buildfix"))
-    def build_and_run_springboot(self):
-        try:
-            project_directory = os.path.abspath(self.state.project_name)
-            print(f"Project directory: {project_directory}")
-            # Navigate to the Spring Boot project directory
-            if os.path.exists(project_directory):
-                os.chdir(project_directory)
-                print("Directory exists:", os.listdir(project_directory))
-            else:
-                print("Directory does not exist:", project_directory)
-                return
+    # @router(or_(SpringBootApplication,"buildfix"))
+    # def build_and_run_springboot(self):
+    #     try:
+    #         project_directory = os.path.abspath(self.state.project_name)
+    #         print(f"Project directory: {project_directory}")
+    #         # Navigate to the Spring Boot project directory
+    #         if os.path.exists(project_directory):
+    #             os.chdir(project_directory)
+    #             print("Directory exists:", os.listdir(project_directory))
+    #         else:
+    #             print("Directory does not exist:", project_directory)
+    #             return
             
-            # Build the project
-            build_command = ["mvn", "clean", "package"]
-            build_process=subprocess.run(build_command,stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
-            if build_process.returncode == 0:
-                print("Build Success!")
-            else:
-                self.state.build_output=build_process.stdout.decode()
-                error_log = self.state.build_output
-                print("Build Error Log:", error_log)
-                error_pattern = r"\[ERROR\]\s*(.*\.java):\[(\d+),(\d+)\]\s*(.*)"  # Matches error lines
-                errors = re.findall(error_pattern, error_log)
-                print("Build Output:", errors)
+    #         # Build the project
+    #         build_command = ["mvn", "clean", "package"]
+    #         build_process=subprocess.run(build_command,stdout=subprocess.PIPE, stderr=subprocess.PIPE,shell=True)
+    #         if build_process.returncode == 0:
+    #             print("Build Success!")
+    #         else:
+    #             self.state.build_output=build_process.stdout.decode()
+    #             error_log = self.state.build_output
+    #             print("Build Error Log:", error_log)
+    #             error_pattern = r"\[ERROR\]\s*(.*\.java):\[(\d+),(\d+)\]\s*(.*)"  # Matches error lines
+    #             errors = re.findall(error_pattern, error_log)
+    #             print("Build Output:", errors)
                 
-                # Printing thr errors paths and the message associated with it
-                for file_path, line, col, error_msg in errors:
-                    print(f"Fixing error in: {file_path} at line {line}, col {col},error message: {error_msg}")
-                return "buildfail"
+    #             # Printing thr errors paths and the message associated with it
+    #             for file_path, line, col, error_msg in errors:
+    #                 print(f"Fixing error in: {file_path} at line {line}, col {col},error message: {error_msg}")
+    #             return "buildfail"
 
-            # Run the built JAR file
-            jar_file = f"target/{self.state.project_name}-0.0.1-SNAPSHOT.jar"  # Adjust according to your project
-            run_command = ["java", "-jar", jar_file]
-            subprocess.Popen(run_command,shell=True)
+    #         # Run the built JAR file
+    #         jar_file = f"target/{self.state.project_name}-0.0.1-SNAPSHOT.jar"  # Adjust according to your project
+    #         run_command = ["java", "-jar", jar_file]
+    #         subprocess.Popen(run_command,shell=True)
 
-            print("Spring Boot application is running...")
-        except subprocess.CalledProcessError as e:
-            print(f"Error during build or execution: {e}")
-        except FileNotFoundError as e:
-            print(f"Directory not found: {project_directory}. Please check the path.")
-        except Exception as e:
-            print(f"Unexpected error: {e}")
+    #         print("Spring Boot application is running...")
+    #     except subprocess.CalledProcessError as e:
+    #         print(f"Error during build or execution: {e}")
+    #     except FileNotFoundError as e:
+    #         print(f"Directory not found: {project_directory}. Please check the path.")
+    #     except Exception as e:
+    #         print(f"Unexpected error: {e}")
             
     # @router("buildfail")
     # def buildfail(self):
