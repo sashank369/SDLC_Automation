@@ -1,0 +1,3 @@
+[submodule "crewai_api_specs"]
+	path = crewai_api_specs
+	url = https://github.com/anujagode/crewai_api_specs.git
