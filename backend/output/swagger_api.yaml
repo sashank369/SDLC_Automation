@@ -1,0 +1,129 @@
+```yaml
+openapi: 3.0.3
+info:
+  title: User Registration API
+  description: API for user registration with essential features including user account creation and data validation.
+  version: 1.0.0
+servers:
+  - url: https://api.example.com
+paths:
+  /api/users/register:
+    post:
+      summary: Register a new user
+      operationId: registerUser
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fullName:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john.doe@example.com"
+                password:
+                  type: string
+                  minLength: 8
+                  example: "strongpassword"
+                phoneNumber:
+                  type: string
+                  example: "+1234567890"
+                dob:
+                  type: string
+                  format: date
+                  example: "1990-01-01"
+                termsAndConditionsAccepted:
+                  type: boolean
+                  example: true
+              required:
+                - fullName
+                - email
+                - password
+                - termsAndConditionsAccepted
+      responses:
+        '201':
+          description: Registration Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Registration Successful"
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "123e4567-e89b-12d3-a456-426614174000"
+                      fullName:
+                        type: string
+                        example: "John Doe"
+                      email:
+                        type: string
+                        format: email
+                        example: "john.doe@example.com"
+                      phoneNumber:
+                        type: string
+                        example: "+1234567890"
+                      dob:
+                        type: string
+                        format: date
+                        example: "1990-01-01"
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Invalid email format"
+components:
+  schemas:
+    UserRegistration:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        phoneNumber:
+          type: string
+          nullable: true
+        dob:
+          type: string
+          format: date
+          nullable: true
+        termsAndConditionsAccepted:
+          type: boolean
+      required:
+        - fullName
+        - email
+        - password
+        - termsAndConditionsAccepted
+  responses:
+    UserRegistrationSuccess:
+      description: Successful user registration
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UserRegistration'
+    BadRequest:
+      description: Bad request for invalid fields
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+```
