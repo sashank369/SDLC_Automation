@@ -6,3 +6,10 @@ venv/
 
 # Ignore system files
 .DS_Store
+
+# Ignore Python cache and other directories
+__pycache__/
+lib/
+user
+water
+demo

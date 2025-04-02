@@ -1,0 +1,541 @@
+---
+openapi: "3.0.1"
+info: 
+  title: "UserPortal"
+  description: "Spring boot API-documentation"
+  contact: 
+    name: "Aparajita Kumari"
+    email: "kumaparajita1@gmail.com"
+  license: 
+    name: "Apache 2.0"
+  version: "v1.0"
+externalDocs: 
+  description: "UserPortal App"
+servers: 
+- url: "http://localhost:9091"
+  description: "Generated server url"
+paths: 
+  /api/teacher/{teacher_id}/{sub_id}: 
+    post: 
+      tags: 
+      - "teacher-controller"
+      operationId: "addSubject"
+      parameters: 
+      - name: "teacher_id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      - name: "sub_id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/TeacherDisplayDTO"
+  /api/subject/update: 
+    post: 
+      tags: 
+      - "subject-controller"
+      operationId: "updateInfo"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/SubjectDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/SubjectDTO"
+  /api/subject/addSubject: 
+    post: 
+      tags: 
+      - "subject-controller"
+      operationId: "addSubject_1"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/SubjectDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "string"
+  /api/student/addSubject/{sub_id}: 
+    post: 
+      tags: 
+      - "student-controller"
+      operationId: "addSubject_2"
+      parameters: 
+      - name: "sub_id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/StudentDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/StudentDisplayDTO"
+  /api/portal/teacher/register: 
+    post: 
+      tags: 
+      - "user-controller"
+      operationId: "registerTeacher"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/TeacherDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "string"
+  /api/portal/teacher/login: 
+    post: 
+      tags: 
+      - "user-controller"
+      operationId: "loginTeacher"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/TeacherLoginDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "string"
+  /api/portal/student/register: 
+    post: 
+      tags: 
+      - "user-controller"
+      operationId: "registerStudent"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/StudentDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "string"
+  /api/portal/student/login: 
+    post: 
+      tags: 
+      - "user-controller"
+      operationId: "loginStudent"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/StudentLoginDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "string"
+  /api/portal/admin/register: 
+    post: 
+      tags: 
+      - "user-controller"
+      operationId: "registerAdmin"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/AdminDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "string"
+  /api/portal/admin/login: 
+    post: 
+      tags: 
+      - "user-controller"
+      operationId: "loginAdmin"
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              $ref: "#/components/schemas/AdminLoginDTO"
+        required: "true"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "string"
+  /api/teacher/{teacher_id}: 
+    get: 
+      tags: 
+      - "teacher-controller"
+      operationId: "getSubjectByTeacherId"
+      parameters: 
+      - name: "teacher_id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/SubjectDTO"
+  /api/teacher/{email}: 
+    get: 
+      tags: 
+      - "teacher-controller"
+      operationId: "getTeacherByEmail"
+      parameters: 
+      - name: "email"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "string"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/TeacherDisplayDTO"
+  /api/teacher/info/{id}: 
+    get: 
+      tags: 
+      - "teacher-controller"
+      operationId: "getTeacherById"
+      parameters: 
+      - name: "id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/TeacherDisplayDTO"
+  /api/teacher/allTeachers: 
+    get: 
+      tags: 
+      - "teacher-controller"
+      operationId: "getAllTeachers"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "array"
+                items: 
+                  $ref: "#/components/schemas/TeacherDisplayDTO"
+  /api/subject/{sub_id}: 
+    get: 
+      tags: 
+      - "subject-controller"
+      operationId: "getInfoById"
+      parameters: 
+      - name: "sub_id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/SubjectDTO"
+  /api/subject/{id}/allStudents: 
+    get: 
+      tags: 
+      - "subject-controller"
+      operationId: "getAllStudents"
+      parameters: 
+      - name: "id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "array"
+                items: 
+                  $ref: "#/components/schemas/StudentDTO"
+  /api/subject/allSubjects: 
+    get: 
+      tags: 
+      - "subject-controller"
+      operationId: "getAllSubjects"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "array"
+                items: 
+                  $ref: "#/components/schemas/SubjectDTO"
+  /api/student/{id}: 
+    get: 
+      tags: 
+      - "student-controller"
+      operationId: "getStudentById"
+      parameters: 
+      - name: "id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/StudentDisplayDTO"
+  /api/student/{email}: 
+    get: 
+      tags: 
+      - "student-controller"
+      operationId: "getStudentByEmail"
+      parameters: 
+      - name: "email"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "string"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                $ref: "#/components/schemas/StudentDisplayDTO"
+  /api/student/subjects/{id}: 
+    get: 
+      tags: 
+      - "student-controller"
+      operationId: "getAllSubjectsById"
+      parameters: 
+      - name: "id"
+        in: "path"
+        required: "true"
+        schema: 
+          type: "integer"
+          format: "int64"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "array"
+                items: 
+                  $ref: "#/components/schemas/SubjectDTO"
+  /api/student/allStudents: 
+    get: 
+      tags: 
+      - "student-controller"
+      operationId: "getAllStudents_1"
+      responses: 
+        200: 
+          description: "OK"
+          content: 
+            */*: 
+              schema: 
+                type: "array"
+                items: 
+                  $ref: "#/components/schemas/StudentDisplayDTO"
+components: 
+  schemas: 
+    TeacherDisplayDTO: 
+      type: "object"
+      properties: 
+        id: 
+          type: "integer"
+          format: "int64"
+        name: 
+          type: "string"
+        email: 
+          type: "string"
+        sub_id: 
+          type: "integer"
+          format: "int64"
+    StudentDTO: 
+      type: "object"
+      properties: 
+        id: 
+          type: "integer"
+          format: "int64"
+        name: 
+          type: "string"
+        age: 
+          type: "integer"
+          format: "int32"
+        subjects: 
+          type: "array"
+          items: 
+            $ref: "#/components/schemas/SubjectDTO"
+        email: 
+          type: "string"
+        password: 
+          type: "string"
+        classLevel: 
+          type: "string"
+        address: 
+          type: "string"
+    SubjectDTO: 
+      type: "object"
+      properties: 
+        id: 
+          type: "integer"
+          format: "int64"
+        name: 
+          type: "string"
+        maxCount: 
+          type: "integer"
+          format: "int32"
+        teacher_id: 
+          type: "integer"
+          format: "int64"
+        students: 
+          type: "array"
+          items: 
+            $ref: "#/components/schemas/StudentDTO"
+    StudentDisplayDTO: 
+      type: "object"
+      properties: 
+        id: 
+          type: "integer"
+          format: "int64"
+        name: 
+          type: "string"
+        age: 
+          type: "integer"
+          format: "int32"
+        subjects: 
+          type: "array"
+          items: 
+            $ref: "#/components/schemas/SubjectDTO"
+        email: 
+          type: "string"
+    TeacherDTO: 
+      type: "object"
+      properties: 
+        id: 
+          type: "integer"
+          format: "int64"
+        name: 
+          type: "string"
+        sub_id: 
+          type: "integer"
+          format: "int64"
+        email: 
+          type: "string"
+        address: 
+          type: "string"
+        age: 
+          type: "integer"
+          format: "int32"
+        exp: 
+          type: "integer"
+          format: "int32"
+        qualification: 
+          type: "string"
+        password: 
+          type: "string"
+    TeacherLoginDTO: 
+      type: "object"
+      properties: 
+        email: 
+          type: "string"
+        password: 
+          type: "string"
+    StudentLoginDTO: 
+      type: "object"
+      properties: 
+        email: 
+          type: "string"
+        password: 
+          type: "string"
+    AdminDTO: 
+      type: "object"
+      properties: 
+        id: 
+          type: "integer"
+          format: "int64"
+        name: 
+          type: "string"
+        email: 
+          type: "string"
+        password: 
+          type: "string"
+    AdminLoginDTO: 
+      type: "object"
+      properties: 
+        id: 
+          type: "integer"
+          format: "int64"
+        email: 
+          type: "string"
+        password: 
+          type: "string"

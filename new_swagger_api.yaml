@@ -1,0 +1,237 @@
+```yaml
+openapi: 3.0.3
+info:
+  title: User Registration API
+  version: 1.0.0
+  description: API specifications for user registration functionalities including registration, validation, and password recovery.
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /register:
+    post:
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+                password:
+                  type: string
+                  minLength: 8
+                  example: SecurePassword123
+                confirmPassword:
+                  type: string
+                  example: SecurePassword123
+                agreeToTerms:
+                  type: boolean
+                  example: true
+                promotionalEmails:
+                  type: boolean
+                  example: false
+                thirdPartySharing:
+                  type: boolean
+                  example: false
+              required:
+                - email
+                - password
+                - confirmPassword
+                - agreeToTerms
+      responses:
+        '201':
+          description: User successfully registered
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User registered successfully
+                  user:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                        example: "12345"
+                      email:
+                        type: string
+                        format: email
+                        example: user@example.com
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Passwords do not match
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Something went wrong on the server
+
+  /register/validation:
+    get:
+      summary: Validate email and phone number
+      parameters:
+        - name: email
+          in: query
+          required: false
+          schema:
+            type: string
+            format: email
+            example: user@example.com
+        - name: phoneNumber
+          in: query
+          required: false
+          schema:
+            type: string
+            example: "1234567890"
+      responses:
+        '200':
+          description: Validation successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Email/Phone number is valid
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Email format is invalid
+
+  /register/socialmedia:
+    post:
+      summary: Register a new user using social media account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                socialMedia:
+                  type: string
+                  enum: [facebook, google, twitter]
+                  example: google
+                socialMediaToken:
+                  type: string
+                  example: "abc123token"
+              required:
+                - socialMedia
+                - socialMediaToken
+      responses:
+        '201':
+          description: User successfully registered via social media
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: User registered successfully
+                  user:
+                    type: object
+                    properties:
+                      userId:
+                        type: string
+                        example: "12345"
+                      email:
+                        type: string
+                        format: email
+                        example: user@example.com
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Invalid social media token
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Something went wrong on the server
+
+  /register/forgotpassword:
+    post:
+      summary: Recover password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: user@example.com
+              required:
+                - email
+      responses:
+        '200':
+          description: Email exists in the system
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Recovery email sent successfully
+        '400':
+          description: Email does not exist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Email not found in the system
+        '500':
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Something went wrong on the server
+```

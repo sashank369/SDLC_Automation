@@ -1,0 +1,90 @@
+react-app/
+- package.json
+- src/
+  - components/
+    - Card.js
+    - Card.css
+    - GradientButton.js
+    - GradientButton.css
+    - Sidebar.js
+    - Sidebar.css
+  - pages/
+    - Dashboard.jsx
+    - Login.jsx
+    - Settings.jsx
+  - App.js
+  - index.js
+  - api.js
+  - App.css
+- server/
+  - server.js
+  - package.json
+  - .env
+
+Key Features:
+  1. Client Side includes components for Login, Dashboard and Settings.
+  2. Each component has associated CSS for styling.
+  3. Uses Express server for authentication via JWT.
+  4. Environment variables stored securely in .env file.
+
+Backend API for authentication and data management:
+
+1. server.js:
+```javascript
+const express = require('express');
+const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const User = require('./models/User');
+const app = express();
+const PORT = process.env.PORT || 5000;
+require('dotenv').config();
+
+app.use(express.json());
+
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.log(err));
+
+app.post('/api/register', async (req, res) => {
+    const { username, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const user = new User({ username, password: hashedPassword });
+
+    try {
+        await user.save();
+        res.status(201).send('User registered');
+    } catch (err) {
+        res.status(400).send(err);
+    }
+});
+
+app.post('/api/login', async (req, res) => {
+    const { username, password } = req.body;
+    const user = await User.findOne({ username });
+    if (!user) return res.status(404).send('User not found');
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).send('Invalid credentials');
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+    res.json({ token });
+});
+
+const verifyToken = (req, res, next) => {
+    const token = req.headers['authorization']?.split(' ')[1];
+    if (!token) return res.sendStatus(403);
+
+    jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+        if (err) return res.sendStatus(403);
+        req.user = user;
+        next();
+    });
+};
+
+app.get('/api/user', verifyToken, (req, res) => {
+    res.json(req.user);
+});
+
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+```
