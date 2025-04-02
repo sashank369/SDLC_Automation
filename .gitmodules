@@ -1,3 +1,6 @@
 [submodule "crewai_api_specs"]
 	path = crewai_api_specs
 	url = https://github.com/anujagode/crewai_api_specs.git
+[submodule "user_registration_crewai"]
+	path = user_registration_crewai
+	url = https://github.com/kumaparajita104/user_registration_crewai.git

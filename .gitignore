@@ -1,0 +1,8 @@
+# Ignore Python virtual environment
+venv/
+
+# Ignore log files
+.env
+
+# Ignore system files
+.DS_Store
