@@ -1,103 +1,93 @@
-api parser result: ### User Registration API Implementation Requirements
+api parser result: # Implementation Requirements
 
-#### API Tag: User Registration
+## API Tag: User Registration
 
-**Endpoints:**
+### 1. Endpoint: `/api/v1/register` - Register a new user
 
-1. **POST /register**
-   - **Summary:** Register a new user.
-   - **Request Body:**
-     - **email** (string, email, required): User's email address.
-     - **password** (string, minLength: 8, required): User's password.
-     - **confirmPassword** (string, required): Confirmation of user's password.
-     - **agreeToTerms** (boolean, required): User agreement to terms.
-     - **promotionalEmails** (boolean): User consent for promotional emails.
-     - **thirdPartySharing** (boolean): User consent for third-party data sharing.
-   - **Responses:**
-     - **201:** User registered successfully.
-     - **400:** Validation failed.
-     - **500:** Internal server error.
+#### Controller Layer
+- **Task**: Implement `registerUser` POST method.
+- **Request Body**:
+  - `email`: string, format email, required
+  - `password`: string, min length 8, required
+  - `confirmPassword`: string, required
+  - `agreeToTerms`: boolean, required
+  - `promotionalEmails`: boolean
+  - `thirdPartySharing`: boolean
 
-2. **GET /register/validation**
-   - **Summary:** Validate email and phone number.
-   - **Parameters:**
-     - **email** (string, email): User's email address.
-     - **phoneNumber** (string): User's phone number.
-   - **Responses:**
-     - **200:** Validation successful.
-     - **400:** Validation failed.
+#### Service Layer
+- **Method**: `registerUser(email, password, confirmPassword, agreeToTerms, promotionalEmails, thirdPartySharing)`
+- **Logic**: Validate input, check password confirmation, hash password, save user details.
 
-3. **POST /register/socialmedia**
-   - **Summary:** Register a new user via social media.
-   - **Request Body:**
-     - **socialMedia** (string, enum: facebook, google, twitter, required): Social media platform.
-     - **socialMediaToken** (string, required): Token from social media.
-   - **Responses:**
-     - **201:** User registered successfully.
-     - **400:** Validation failed.
-     - **500:** Internal server error.
+#### Repository Layer
+- **Entity**: `User`
+  - Attributes:
+    - `userId`: string
+    - `email`: string
+    - `passwordHash`: string
+    - `agreeToTerms`: boolean
+    - `promotionalEmails`: boolean
+    - `thirdPartySharing`: boolean
 
-4. **POST /register/forgotpassword**
-   - **Summary:** Recover forgotten password.
-   - **Request Body:**
-     - **email** (string, email, required): User's email address.
-   - **Responses:**
-     - **200:** Password recovery initiated.
-     - **400:** Email does not exist.
-     - **500:** Internal server error.
+### 2. Endpoint: `/api/v1/register/validation` - Validate email and phone number
 
-**Data Models:**
+#### Controller Layer
+- **Task**: Implement `validateFields` GET method.
+- **Query Parameters**:
+  - `email`: string, format email
+  - `phoneNumber`: string
 
-- **UserRegistrationRequest:**
-  - **Attributes:**
-    - email: string
-    - password: string
-    - confirmPassword: string
-    - agreeToTerms: boolean
-    - promotionalEmails: boolean
-    - thirdPartySharing: boolean
+#### Service Layer
+- **Method**: `validateFields(email, phoneNumber)`
+- **Logic**: Validate email format, check if email or phone number exists in the database.
 
-- **ValidationResult:**
-  - **Attributes:**
-    - message: string
-    - details: object
+### 3. Endpoint: `/api/v1/register/socialmedia` - Register a user with social media
 
-- **SocialMediaRegistrationRequest:**
-  - **Attributes:**
-    - socialMedia: string
-    - socialMediaToken: string
+#### Controller Layer
+- **Task**: Implement `registerSocialMediaUser` POST method.
+- **Request Body**:
+  - `socialMedia`: string, enum [facebook, google, twitter], required
+  - `socialMediaToken`: string, required
 
-- **ForgotPasswordRequest:**
-  - **Attributes:**
-    - email: string
+#### Service Layer
+- **Method**: `registerSocialMediaUser(socialMedia, socialMediaToken)`
+- **Logic**: Validate social media token, retrieve user info from social media provider, save user details.
 
-**Database Schema:**
+#### Repository Layer
+- **Entity**: Extend `User` entity with social media fields if necessary.
 
-- **User Table:**
-  - id: string (Primary Key)
-  - email: string (Unique)
-  - passwordHash: string
-  - agreeToTerms: boolean
-  - promotionalEmails: boolean
-  - thirdPartySharing: boolean
+### 4. Endpoint: `/api/v1/register/forgotpassword` - Recover forgotten password
 
-**Controller Layer Tasks:**
+#### Controller Layer
+- **Task**: Implement `recoverPassword` POST method.
+- **Request Body**:
+  - `email`: string, format email, required
 
-- Implement `UserRegistrationController` with endpoints for `/register`, `/register/validation`, `/register/socialmedia`, and `/register/forgotpassword`.
+#### Service Layer
+- **Method**: `recoverPassword(email)`
+- **Logic**: Check if email exists, generate password recovery link, send email.
 
-**Service Layer Tasks:**
+### Data Models
 
-- Implement `UserRegistrationService` with methods:
-  - `registerUser(UserRegistrationRequest request)`
-  - `validateEmailAndPhone(String email, String phoneNumber)`
-  - `registerUserViaSocialMedia(SocialMediaRegistrationRequest request)`
-  - `recoverPassword(ForgotPasswordRequest request)`
+- **User**:
+  - `userId`: string
+  - `email`: string, format email
+  - `passwordHash`: string
+  - `agreeToTerms`: boolean
+  - `promotionalEmails`: boolean
+  - `thirdPartySharing`: boolean
 
-**Repository Layer Tasks:**
+- **Responses**:
+  - `ErrorResponse`: Contains `message` string
+  - `SuccessResponse`: Contains `message` string and `user` object with `userId` and `email`
 
-- Implement `UserRepository` for database interactions:
-  - `save(User user)`
-  - `findByEmail(String email)`
-  - `existsByEmail(String email)`
+### Database Schema
 
-This detailed breakdown ensures each layer's requirements are clear, allowing the development team to proceed with implementation in alignment with the API contract.
+- **Table**: `users`
+  - `user_id`: VARCHAR, Primary Key
+  - `email`: VARCHAR, Unique
+  - `password_hash`: VARCHAR
+  - `agree_to_terms`: BOOLEAN
+  - `promotional_emails`: BOOLEAN
+  - `third_party_sharing`: BOOLEAN
+
+This detailed breakdown should guide the development of the Controller, Service, and Repository layers, adhering to the specified API contract.
