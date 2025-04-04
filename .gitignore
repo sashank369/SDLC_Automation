@@ -1,6 +1,8 @@
 # Ignore Python virtual environment
 venv/
 env_1/
+*.pyc
+__pycache__/
 # Ignore log files
 .env
 
