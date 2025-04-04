@@ -6,7 +6,11 @@ from pydantic import BaseModel
 
 from crewai.flow.flow import Flow, listen, start,router,or_
 import shutil
+import sys
+import os
 
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 from code_generator.Backend_crews.api_parser.api_parser import ApiParser
 from code_generator.Backend_crews.Model_Layer.Model_Layer import ModelLayer
 from code_generator.Backend_crews.evaluate_api_parser.evaluate_api_parser import EvaluateApiParser
