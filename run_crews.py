@@ -4,7 +4,7 @@ import time
 
 # Define paths
 USER_REGISTRATION_MAIN = "/Users/aparajitakumari/Prd_to_Spec/user_registration_crewai/main.py"
-PRD_FILE_PATH = "/Users/aparajitakumari/Prd_to_Spec/user_registration_crewai/prd_document.md"
+PRD_FILE_PATH = "/Users/aparajitakumari/Prd_to_Spec/prd_document.md"
 API_SPECS_MAIN = "/Users/aparajitakumari/Prd_to_Spec/crewai_api_specs/backend/main.py"
 
 def run_user_registration():
