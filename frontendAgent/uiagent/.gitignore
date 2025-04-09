@@ -1,6 +1,0 @@
-.env
-__pycache__/
-lib/
-node_modules
-.venv
-/temp/node_modules

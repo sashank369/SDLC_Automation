@@ -4,7 +4,6 @@ venv/
 # Ignore log files
 .env
 
-
 # Ignore system files
 .DS_Store
 
@@ -14,3 +13,6 @@ lib/
 user
 water
 demo
+
+# Ignore backend architecture folder
+backend_architecture/
