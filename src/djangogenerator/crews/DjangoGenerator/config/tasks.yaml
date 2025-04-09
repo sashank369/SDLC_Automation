@@ -1,0 +1,21 @@
+generate_django_backend:
+  description: >
+    Based on the api specification provided in the OpenAPI contract, and the requirements for the Django Application, create a fully functional Django backend with the following steps:
+      - Generate similar code provided in the django code.
+      - Create Django views for each endpoint defined in the OpenAPI contract.
+        - Each view should return dummy responses as described in the contract.
+        - Use @csrf_exempt where POST requests are involved.
+      - Define `urlpatterns` using Django's `path()` function to route to each view.
+      - Do not connect to any database. Return hardcoded (dummy) responses based on the contract.
+      - Structure the code in a single-file format using Django’s minimal setup (without creating a full project/app structure).
+      - If needed, define the Django settings programmatically and ensure the app can run using `get_wsgi_application()`.
+      - Ensure the response format, status codes, and content types match the OpenAPI contract exactly.
+      - Make sure the code is executable via: `python your_script.py`.
+
+  expected_output: >
+    A single runnable Python script (scriptHighTemp.py) that:
+      - Implements a minimal Django server
+      - Includes view functions for all endpoints
+      - Maps all endpoints as per the OpenAPI contract
+      - Returns dummy JSON responses
+      - Can be executed directly using the command: `python scriptHighTemp.py`

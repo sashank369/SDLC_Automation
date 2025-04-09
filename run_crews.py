@@ -6,8 +6,7 @@ import time
 USER_REGISTRATION_MAIN = "/Users/aparajitakumari/Prd_to_Spec/user_registration_crewai/main.py"
 PRD_FILE_PATH = "/Users/aparajitakumari/Prd_to_Spec/prd_document.md"
 API_SPECS_MAIN = "/Users/aparajitakumari/Prd_to_Spec/crewai_api_specs/backend_specs/main.py"
-SWAGGER_YAML_PATH="/Users/aparajitakumari/Prd_to_Spec/crewai_api_specs/backend_specs/swagger_api.yaml"
-Backend_Path = "/Users/aparajitakumari/Prd_to_Spec/backend_architecture/main.py"
+Backend_Path = "/Users/aparajitakumari/Prd_to_Spec/src/djangogenerator/main.py"
 def run_user_registration():
     print("\n📋 Running User Registration Crew...")
     subprocess.run(["python", USER_REGISTRATION_MAIN], check=True)
