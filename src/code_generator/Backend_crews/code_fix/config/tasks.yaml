@@ -1,7 +1,0 @@
-code_fixer_task:
-  description: >
-    Analyze Maven {build_output} logs, extract file paths, read the full content of these files, modify them completely, and write back the changes.
-    No need to build.
-  expected_output: >
-    Confirmation that each file has been updated successfully. Return true if changes are made, false otherwise.
-  agent: code_fixer
