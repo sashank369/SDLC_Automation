@@ -2,90 +2,68 @@
 
 ## User Requirements
 
-| Field Name        | Type       | Mandatory | Purpose Definition                               |
-|-------------------|------------|-----------|--------------------------------------------------|
-| Username          | Alphanumeric | Yes       | To uniquely identify the user within the system. |
-| Password          | Alphanumeric | Yes       | To secure user account access with a private code. |
-| Email Address     | Alphanumeric | Yes       | To provide a communication channel and validate user identity. |
-| Date of Birth     | Date       | Yes       | To verify user age for compliance purposes.       |
-| First Name        | Alphanumeric | No        | To personalize user experience and communication. |
-| Last Name         | Alphanumeric | No        | To personalize user experience and communication. |
+| Field Name      | Type          | Mandatory | Purpose Definition                                                          |
+|-----------------|---------------|-----------|---------------------------------------------------------------------------|
+| First Name      | Alphanumeric  | Yes       | To address the user by their given name.                                  |
+| Last Name       | Alphanumeric  | Yes       | To identify the user's familial or surname, aiding in personal identification. |
+| Email Address   | Alphanumeric  | Yes       | For account verification and communication purposes.                      |
+| Password        | Alphanumeric  | Yes       | To ensure user account security and authentication.                       |
+| Date of Birth   | Date          | No        | To verify age eligibility for services.                                   |
+| Phone Number    | Numeric       | No        | For optional two-factor authentication or emergency contact.              |
 
-This table captures the essential input fields for user registration, streamlining the process to improve user experience while ensuring necessary data is collected.
+This table includes only essential fields, focusing on balancing user convenience with necessary data collection.
 
 ---
 
 ## UI/UX Design
 
-- **Field Grouping:**  
-  - Group mandatory fields together at the top.  
-  - Separate optional fields from mandatory ones with a visual divider.  
-
-- **Label & Input Styling:**  
-  - Use clear, bold labels above each input field.  
-  - Inputs should have rounded corners with a light border.  
-  - Mandatory fields marked with a red asterisk next to the label.  
-  - Use larger font size for labels to enhance readability.  
-
-- **Button Design:**  
-  - Primary action button ("Register") should be prominently displayed at the bottom.  
-  - Use a contrasting color for buttons that stands out against the background.  
-  - Button text to be bold and centered for clarity.  
-  - Include hover effect for interactivity feedback.  
-
-- **Feedback Messages:**  
-  - Use brief, positive messages upon successful form submission.  
-  - Display error messages in red color directly under the relevant field.  
-  - Provide guidance for correcting errors (e.g., “Please enter a valid email.”).  
-
-- **Navigation Order:**  
-  - Follow a logical top-to-bottom order for fields.  
-  - Tab index set according to the visual layout for ease of keyboard navigation.  
-  - Last field navigates to the "Register" button seamlessly.
+- **Field Arrangement**:
+  - Group fields logically, placing related fields like 'First Name' and 'Last Name' together.
+  - Align fields vertically for a linear flow that users can easily follow top to bottom.
+  
+- **Label & Input Styling**:
+  - Use a medium font size for labels for easy readability; position labels directly above the input fields to maintain clarity.
+  - Input fields should have a clean border with slightly rounded corners for a welcoming appearance.
+  
+- **Button Design**:
+  - Design buttons with a rounded shape for a smooth look.
+  - Use a light color for the primary action button such as 'Submit' or 'Register'.
+  - Place the primary button below all input fields, center-aligned, to guide intuitive completion of the form.
+  
+- **Feedback & Validation**:
+  - Display error messages in a noticeable, distinct color below the relevant input field.
+  - Show confirmation messages in a light, positive color above the form once submitted successfully.
+  
+- **Cursor & Navigation**:
+  - Ensure a logical tab order that flows from top to bottom, left to right, matching the visual order of the fields.
+  - Implement a subtle hover effect, such as a slight color change or shadow, on input fields to indicate interactivity and focus.
 
 ---
 
 ## API Specification
 
-1. The user fills out the registration form with their “username”, which is used to uniquely identify the user in the system.  
-2. The user provides a “password”, which is securely stored for authentication during future logins.  
-3. The system collects the user’s “email address”, which is essential for account verification and communication purposes.  
-4. The user may input their “first name” and “last name” to personalize their account experience.  
-5. The form could also ask for “phone number” for additional contact methods or to enhance account recovery options.  
-6. Once the user submits the form, all these details are packaged in a structured format (usually JSON) and sent to the server through an API endpoint.  
-7. The server processes the received data, storing the information in the database for later access and use.
+- When a user fills out the **registration form**, the system collects specific "details" from them.
+- These details typically include **"Name"**, **"Email"**, **"Password"**, and sometimes **"Phone Number"** or **"Address"**.
+- Each of these details is mapped to corresponding **API attributes** for smooth integration with the backend.
+- For example, the **"Name"** from the form becomes an attribute like **user_name** in the API.
+- The **system** uses this information to create a new user profile, ensuring that each detail is stored in the correct format and location.
+- This ensures that the user's **registration** is successful and their information is available for future interactions.
 
 ---
 
 ## Backend Architecture
 
-- **Information Stored:**
-  - **Name** - Full name of the user (first and last).
-  - **Email** - Unique email address for identification and communication.
-  - **Password** - Secure password for user authentication.
-  - **Date of Birth** - Used for age verification and personalization.
-  - **Phone Number** - Alternative contact method and for two-factor authentication.
-  - **Address** - Physical address for shipping and personal verification (optional).
+- Information Saved: Users typically provide details such as name, age, email, password, and possibly additional fields like phone number, address, and profile picture.
 
-- **Data Organization:**
-  - **Data Types** - Each piece of information is categorized by type (e.g. strings, integers, dates) for efficient storage.
-  - **Indexing** - Key fields (e.g., email) are indexed to speed up the search and retrieval process.
-  - **Normalization** - The data structure is organized to reduce redundancy and improve data integrity.
+- Data Organization: User data is stored in a database system where each user's information is kept in records. These records are indexed for quick access and retrieval.
 
-- **Data Retrieval:**
-  - **Querying** - SQL or other query languages are used to fetch user data based on specified parameters (e.g., email for login).
-  - **Filtering** - Users can be filtered based on specific attributes, such as active/inactive status or date of registration.
-  - **Sorting** - Data can be sorted for reporting or management purposes by fields such as registration date or age.
+- Data Retrieval: The system retrieves user data using queries on specific fields like email or user ID, ensuring efficient access for authentication or profile updates.
 
-- **Storage Model:**
-  - **Database Management System (DBMS)** - All data is maintained in a DBMS which handles data storage and retrieval efficiently.
-  - **Scalability** - The structure is designed for scalability to handle increased user data over time with minimal performance impact.
+- Autofill and Updates: Upon user login, relevant data can be quickly retrieved to access user profiles or facilitate personalized experiences. Data management processes allow updates to user details while maintaining database integrity.
 
-- **Processing Flow:**
-  - **Input Validation** - Before storage, user input undergoes validation to ensure data integrity.
-  - **Storage Mechanism** - After validation, each validated entry is stored in the database under the defined structure, ensuring rapid access and management.
+- Scalability: Structuring data with scalability in mind enables the system to manage growing numbers of user registrations without performance degradation. 
 
-This highlights the core aspects of storing and managing user registration details in an organized and efficient manner.
+- Backup and Recovery: Regular backups ensure user data is preserved and can be restored in the event of data loss or corruption.
 
 ---
 

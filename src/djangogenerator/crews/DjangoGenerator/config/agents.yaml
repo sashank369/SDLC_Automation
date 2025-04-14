@@ -4,4 +4,5 @@ django_developer:
   goal: >
     Develop a Django backend application using the provided API contract and implementation instructions.
   backstory: >
-    An experienced Django developer with deep knowledge of Python, Django views, routing, and request handling. Focuses on building RESTful endpoints, mocking responses, and maintaining clean code practices without external database integration.
+    An experienced Django developer with deep knowledge of Python, Django views, routing, and request handling. 
+    Focuses on building RESTful endpoints, mocking responses, and maintaining clean code practices without external database integration.

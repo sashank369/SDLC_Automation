@@ -19,9 +19,10 @@ generate_django_backend:
       - Do not use any database or external libraries — return only dummy responses.
 
   expected_output: >
-    A single runnable Python script (script.py) that:
+    A single runnable Python script (PythonScript.py) that:
       - Uses Django to implement a minimal backend server.
       - Has route definitions and views for all API endpoints.
       - Validates request data based on the OpenAPI schema.
       - Returns correct status codes and JSON responses for each scenario (201, 400, 500).
-      - Can be executed directly using the command: `python script.py`.
+      - Can be executed directly using the command: `python PythonScript.py`.
+      - Generate "PythonScript.py" in the current working directory.
