@@ -2,68 +2,75 @@
 
 ## User Requirements
 
-| Field Name      | Type          | Mandatory | Purpose Definition                                                          |
-|-----------------|---------------|-----------|---------------------------------------------------------------------------|
-| First Name      | Alphanumeric  | Yes       | To address the user by their given name.                                  |
-| Last Name       | Alphanumeric  | Yes       | To identify the user's familial or surname, aiding in personal identification. |
-| Email Address   | Alphanumeric  | Yes       | For account verification and communication purposes.                      |
-| Password        | Alphanumeric  | Yes       | To ensure user account security and authentication.                       |
-| Date of Birth   | Date          | No        | To verify age eligibility for services.                                   |
-| Phone Number    | Numeric       | No        | For optional two-factor authentication or emergency contact.              |
+| Field Name       | Type        | Mandatory | Purpose                                               |
+|------------------|-------------|-----------|-------------------------------------------------------|
+| Username         | Alphanumeric| Yes       | Unique identifier for user login and profile display. |
+| Password         | Alphanumeric| Yes       | Secure access key to user account                     |
+| Email Address    | Alphanumeric| Yes       | Used for communication and account verification       |
+| First Name       | Alphabetic  | No        | The user's given name                                  |
+| Last Name        | Alphabetic  | No        | The user's family name                                 | 
 
-This table includes only essential fields, focusing on balancing user convenience with necessary data collection.
+Note: Optional fields like First Name and Last Name are sometimes essential depending on the application requirement but are generally not mandatory for basic registration. The required fields are streamlined for minimum input while ensuring security and communication.
 
 ---
 
 ## UI/UX Design
 
-- **Field Arrangement**:
-  - Group fields logically, placing related fields like 'First Name' and 'Last Name' together.
-  - Align fields vertically for a linear flow that users can easily follow top to bottom.
-  
+- **Field Arrangement**:   
+  - Group fields logically (e.g., Personal Details, Account Details, Security Settings).
+  - Align fields vertically for easy scanning and a clean appearance.
+
 - **Label & Input Styling**:
-  - Use a medium font size for labels for easy readability; position labels directly above the input fields to maintain clarity.
-  - Input fields should have a clean border with slightly rounded corners for a welcoming appearance.
-  
+  - Use medium font size for labels for readability.
+  - Position labels above the input fields to maintain a consistent flow.
+  - Input fields should have a light border and ample padding for a friendly touch-target.
+
 - **Button Design**:
-  - Design buttons with a rounded shape for a smooth look.
-  - Use a light color for the primary action button such as 'Submit' or 'Register'.
-  - Place the primary button below all input fields, center-aligned, to guide intuitive completion of the form.
-  
+  - Use slightly rounded shapes for a modern, approachable look.
+  - Apply a vibrant color that stands out from the form but complements the overall design.
+  - Place the primary action button (e.g., "Register") centered at the bottom of the form.
+
 - **Feedback & Validation**:
-  - Display error messages in a noticeable, distinct color below the relevant input field.
-  - Show confirmation messages in a light, positive color above the form once submitted successfully.
-  
+  - Display error messages in a light color near the relevant input field.
+  - Use a small icon to visually denote which fields need attention or are optional.
+  - Confirmations should appear at the top of the form in a subtle color and encouraging text.
+
 - **Cursor & Navigation**:
-  - Ensure a logical tab order that flows from top to bottom, left to right, matching the visual order of the fields.
-  - Implement a subtle hover effect, such as a slight color change or shadow, on input fields to indicate interactivity and focus.
+  - Ensure a logical tab order that follows the natural reading sequence of the form.
+  - Provide a slightly emphasized hover effect on input fields and buttons to signal interactivity.
 
 ---
 
 ## API Specification
 
-- When a user fills out the **registration form**, the system collects specific "details" from them.
-- These details typically include **"Name"**, **"Email"**, **"Password"**, and sometimes **"Phone Number"** or **"Address"**.
-- Each of these details is mapped to corresponding **API attributes** for smooth integration with the backend.
-- For example, the **"Name"** from the form becomes an attribute like **user_name** in the API.
-- The **system** uses this information to create a new user profile, ensuring that each detail is stored in the correct format and location.
-- This ensures that the user's **registration** is successful and their information is available for future interactions.
+The registration form collects the following details from the user and sends them to the system:
+
+- **"Username"**: Used as a unique identifier for the user within the system.
+- **"Email"**: Used for communication, verification, and password recovery.
+- **"Password"**: Encrypted before storage to ensure security; used for login authentication.
+- **"First Name"** and **"Last Name"**: Used for personalizing the user experience.
+- **"Date of Birth"**: Used for age verification and to customize content based on age.
+- **"Address"**: Used for location-based services, billing, and shipping if applicable.
+- **"Phone Number"**: Sometimes used for two-factor authentication and important notifications.
+
+Each of these details is mapped and translated into specific attributes that the system uses to store, process, and manage user data effectively, ensuring a smooth backend integration.
 
 ---
 
 ## Backend Architecture
 
-- Information Saved: Users typically provide details such as name, age, email, password, and possibly additional fields like phone number, address, and profile picture.
+1. **Information Saved:**  
+   - **Personal Details:** Such as full name, age, and gender.
+   - **Contact Information:** Includes email address and phone number.
+   - **Account Credentials:** Such as username and password.
+   - **Location Data:** Such as country and city.
 
-- Data Organization: User data is stored in a database system where each user's information is kept in records. These records are indexed for quick access and retrieval.
-
-- Data Retrieval: The system retrieves user data using queries on specific fields like email or user ID, ensuring efficient access for authentication or profile updates.
-
-- Autofill and Updates: Upon user login, relevant data can be quickly retrieved to access user profiles or facilitate personalized experiences. Data management processes allow updates to user details while maintaining database integrity.
-
-- Scalability: Structuring data with scalability in mind enables the system to manage growing numbers of user registrations without performance degradation. 
-
-- Backup and Recovery: Regular backups ensure user data is preserved and can be restored in the event of data loss or corruption.
+2. **Organization and Retrieval:**
+   - **Structured Format:** User registration data is stored using a relational database where each user's information is categorized in related tables.
+   - **Indexing:** Commonly searched fields like email or username are indexed to enhance quick retrieval.
+   - **Unique Identifiers:** Each user is allocated a unique identifier (e.g., user_id) for efficient access and management.
+   - **Query Language:** Structured Query Language (SQL) is typically utilized to execute queries for retrieving user details efficiently.
+   - **Data Normalization:** Applied to reduce redundancy and improve data integrity across the stored information.
 
 ---
 

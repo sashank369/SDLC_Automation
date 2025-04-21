@@ -24,13 +24,15 @@ class GeneratorCrew:
     @agent
     def django_developer(self) -> Agent:
         tool1=FileReadTool(file_path=os.getenv('API_CONTRACT_PATH'))
-        tool2=FileReadTool(file_path='./test.py')
+        # tool2=FileReadTool(file_path='./test.py')
         tool3=FileWriterTool()
         return Agent(   
             config=self.agents_config["django_developer"],
             verbose=True,
             llm=self.llm,
-            tools=[tool1,tool2,tool3],
+            tools=[tool1,tool3],
+            # allow_code_execution=True,
+            # code_execution_mode="unsafe", 
             memory=True,
         )
 
@@ -38,7 +40,8 @@ class GeneratorCrew:
     def generate_django_backend(self) -> Task:
         return Task(
             config=self.tasks_config["generate_django_backend"],
-            agent=self.django_developer()
+            agent=self.django_developer(),
+            # human_input=True,
         )
 
     @crew

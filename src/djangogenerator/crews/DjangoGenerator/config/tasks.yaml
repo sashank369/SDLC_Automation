@@ -1,28 +1,47 @@
 generate_django_backend:
   description: >
     Use the OpenAPI 3.0.3 specification to generate a complete Django backend in a single Python file.
-    Follow these instructions closely:
-      - Implement one Django view for each endpoint in the API contract.
-      - In each view:
-        - Validate the request method.
+    Follow these instructions carefully:
+
+      - Create Django model classes using `models.Model` based on schema definitions from the OpenAPI contract.
+      - Setup Django settings via `settings.configure(...)` with:
+          - DEBUG=True,
+          - SECRET_KEY,
+          - INSTALLED_APPS with `'__main__'`,
+          - ROOT_URLCONF=__name__,
+          - DATABASES configured for MongoDB via `djongo`
+      - Configure MongoDB settings via `djongo` inside `settings.configure(...)`:
+          - ENGINE: 'djongo'
+          - NAME: 'the database name'
+          - ENFORCE_SCHEMA: False
+          - CLIENT.host: 'mongodb://localhost:27017/'
+      - Call `django.setup()` right after settings configuration to properly initialize Django apps and ORM.
+      - Create views for each endpoint:
+        - Use `@csrf_exempt` to allow POST requests.
+        - Validate request methods.
         - Parse and validate the JSON request body.
-        - Check for presence of all required fields as defined in the schema's `required` list.
-        - Return status `400` if required fields are missing or invalid.
-        - Return status `201` with a success message if the input is valid.
-        - Handle JSON decode errors gracefully and return `400` with the corresponding error message.
-        - Catch generic server-side exceptions and return status `500` with a dummy error message.
-      - Use `@csrf_exempt` on views to allow POST requests.
-      - Return response payloads in the exact structure defined in the OpenAPI schemas (`SuccessResponse`, `ErrorResponse`).
-      - Define the `urlpatterns` properly using Django’s `path()` function.
-      - Configure minimal Django settings programmatically using `settings.configure(...)`.
-      - Ensure the application runs using `get_wsgi_application()` and can be started via `python your_script.py`.
-      - Do not use any database or external libraries — return only dummy responses.
+        - Check for all required fields (defined in the OpenAPI schema).
+        - Return HTTP 400 if fields are missing or invalid.
+        - Hash passwords using `make_password` from `django.contrib.auth.hashers` if applicable.
+        - Check for duplicate usernames or emails using Django ORM `User.objects.filter(...).exists()`.
+        - Save valid data to the database using Django models.
+        - Return HTTP 201 with correct response structure (`SuccessResponse`) and new user ID if successful.
+        - Catch `JSONDecodeError` and return HTTP 400 with a clear message.
+        - Catch all other exceptions and return HTTP 500 with error info.
+
+      - Define `urlpatterns` using Django’s `path()` function.
+      - Use `execute_from_command_line` to run:
+          - `makemigrations`
+          - `migrate`
+          - `runserver`
+      - Use `get_wsgi_application()` to serve the application.
+      - Use `path()` for routing rather than `url()`.
+      - Output everything as a single executable Python script: `DjangoScript.py`.
 
   expected_output: >
-    A single runnable Python script (PythonScript.py) that:
-      - Uses Django to implement a minimal backend server.
-      - Has route definitions and views for all API endpoints.
-      - Validates request data based on the OpenAPI schema.
-      - Returns correct status codes and JSON responses for each scenario (201, 400, 500).
-      - Can be executed directly using the command: `python PythonScript.py`.
-      - Generate "PythonScript.py" in the current working directory.
+    A single runnable Python script (DjangoScript.py) that:
+      - Uses Django with MongoDB integration via Djongo and real data models.
+      - Implements endpoint views with data validation, database access, and proper status responses.
+      - Runs end-to-end using `python DjangoScript.py` (including migrations and starting the server).
+      - Reflects the OpenAPI schemas and validation rules exactly.
+      - Generate "DjangoScript.py" in the current working directory.
